@@ -8,7 +8,7 @@ import 'tailwindcss/tailwind.css';
 
 export default function HeroSection() {
   const [text, setText] = useState<string>('');  // State for the typewriter effect
-  const fullText: string = "Hey, I'm Marco Areliano Suteja";  // The full text to type
+  const fullText: string = "Hey, I'm Marco Areliano Suteja!";  // The full text to type
   const typingSpeed: number = 150;  // Adjust typing speed for better consistency
   const [showCursor, setShowCursor] = useState(true);  // State for the blinking cursor
 
