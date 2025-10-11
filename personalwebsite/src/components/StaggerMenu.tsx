@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
 import ShinyText from './ShinyText'
 
 interface MenuItem {
@@ -64,7 +63,7 @@ const StaggerMenu = ({ scrollToSection }: StaggerMenuProps) => {
       opacity: 1,
       scale: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 24
       }
@@ -150,7 +149,7 @@ const StaggerMenu = ({ scrollToSection }: StaggerMenuProps) => {
               - This approach is more reliable than text-right for consistent alignment
             */}
             <div className="flex flex-col items-end space-y-4 pointer-events-auto">
-              {menuItems.map((item, index) => (
+              {menuItems.map((item) => (
                 <motion.button
                   key={item.label}
                   variants={itemVariants}

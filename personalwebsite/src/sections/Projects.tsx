@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { Github, ExternalLink, Terminal } from 'lucide-react'
 import Modal from '../components/Modal'
 import Cable from '../components/Cable'
-import React from 'react'
 
 interface Project {
   id: number
