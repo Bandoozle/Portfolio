@@ -1,6 +1,28 @@
 import { motion } from 'framer-motion'
 import Cable from '../components/Cable'
 import ElectricBorder from '../components/ElectricBorder'
+import LogoLoop from '../components/LogoLoop'
+import { 
+  SiPython, 
+  SiPytorch, 
+  SiReact, 
+  SiTypescript, 
+  SiNodedotjs, 
+  SiPostgresql, 
+  SiDocker, 
+  SiAmazonwebservices
+} from 'react-icons/si'
+
+const techLogos = [
+  { node: <SiPython />, title: "Python", href: "https://www.python.org" },
+  { node: <SiPytorch />, title: "PyTorch", href: "https://pytorch.org" },
+  { node: <SiReact />, title: "React", href: "https://react.dev" },
+  { node: <SiTypescript />, title: "TypeScript", href: "https://www.typescriptlang.org" },
+  { node: <SiNodedotjs />, title: "Node.js", href: "https://nodejs.org" },
+  { node: <SiPostgresql />, title: "PostgreSQL", href: "https://www.postgresql.org" },
+  { node: <SiDocker />, title: "Docker", href: "https://www.docker.com" },
+  { node: <SiAmazonwebservices />, title: "AWS", href: "https://aws.amazon.com" },
+];
 
 const About = () => {
   return (
@@ -199,24 +221,31 @@ const About = () => {
           <h3 className="text-2xl font-bold text-center mb-8 text-white font-mono">
             <span className="text-[#E9A53F]">$ </span>tech --stack
           </h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {[
-              'Python', 'PyTorch', 'TensorFlow', 'React', 'Next.js', 'TypeScript', 
-              'Node.js', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS', 'GraphQL'
-            ].map((tech, index) => (
-              <motion.div
-                key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.3 + index * 0.05 }}
-                whileHover={{ scale: 1.1, y: -2 }}
-                className="glass px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/20 transition-all cursor-default text-white border border-[#E9A53F]/30"
-              >
-                <span className="text-[#E9A53F] mr-2">▸</span>{tech}
-              </motion.div>
-            ))}
-          </div>
         </motion.div>
+      </div>
+
+      {/* Edge-to-edge LogoLoop */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.4 }}
+        style={{ height: '120px', position: 'relative', overflow: 'hidden', width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}
+      >
+        <LogoLoop
+          logos={techLogos}
+          speed={60}
+          direction="left"
+          logoHeight={48}
+          gap={48}
+          pauseOnHover
+          scaleOnHover
+          fadeOut
+          fadeOutColor="#0B0B0F"
+          ariaLabel="Technology stack"
+        />
+      </motion.div>
+      
+      <div className="container mx-auto px-6 relative z-10">
       </div>
     </section>
   )
