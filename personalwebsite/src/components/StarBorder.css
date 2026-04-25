@@ -1,0 +1,42 @@
+.star-border-container {
+  position: relative;
+  display: inline-block;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.border-gradient-bottom,
+.border-gradient-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  animation: star-border-move 6s linear infinite;
+}
+
+.border-gradient-bottom {
+  bottom: 0;
+  animation-direction: reverse;
+}
+
+.border-gradient-top {
+  top: 0;
+}
+
+.inner-content {
+  position: relative;
+  z-index: 1;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes star-border-move {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
