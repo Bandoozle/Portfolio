@@ -1,0 +1,265 @@
+/* Personal OS — amber terminal (scoped), pixel-accurate to retro mockup */
+
+.personal-os-root {
+  --os-bg: #000000;
+  --os-amber: #ffb000;
+  --os-amber-muted: rgba(255, 176, 0, 0.55);
+  --os-amber-dim: rgba(255, 176, 0, 0.35);
+  --os-border: #ffb000;
+  background-color: var(--os-bg);
+  color: var(--os-amber);
+  font-family: 'VT323', 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 22px;
+  line-height: 1.35;
+  -webkit-font-smoothing: none;
+}
+
+/* Outer retro “screen” — curved panel inset from viewport */
+.personal-os-shell {
+  border-radius: 1.25rem;
+  border: 1px solid var(--os-border);
+  box-shadow:
+    0 0 0 1px rgba(255, 176, 0, 0.12),
+    0 0 48px rgba(255, 176, 0, 0.06);
+}
+
+.personal-os-root::before,
+.personal-os-root::after {
+  display: none;
+}
+
+.personal-os-chrome {
+  border-bottom: 1px solid var(--os-border);
+  background: var(--os-bg);
+}
+
+.personal-os-frame {
+  border: 1px solid var(--os-border);
+  background: var(--os-bg);
+}
+
+.personal-os-border {
+  border: 1px solid var(--os-border);
+}
+
+.personal-os-nav-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  font: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--os-amber-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.personal-os-nav-btn:hover {
+  color: var(--os-amber);
+}
+
+.personal-os-nav-btn--active {
+  color: var(--os-amber);
+  border-color: var(--os-border);
+  background: rgba(255, 176, 0, 0.06);
+}
+
+.personal-os-section-title {
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--os-amber-dim);
+  margin-bottom: 10px;
+}
+
+.personal-os-footer-bar {
+  border-top: 1px solid var(--os-border);
+  background: var(--os-bg);
+}
+
+.personal-os-progress-track {
+  height: 4px;
+  background: rgba(255, 176, 0, 0.15);
+  border: 1px solid rgba(255, 176, 0, 0.35);
+}
+
+.personal-os-progress-fill {
+  height: 100%;
+  width: 34%;
+  background: var(--os-amber);
+}
+
+.personal-os-interest-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  color: var(--os-amber);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.personal-os-interest-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  stroke: var(--os-amber);
+  stroke-width: 1.5;
+}
+
+/* Header back — matches Personal.OS chrome */
+.personal-os-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0;
+  color: #ffb000;
+  background: #000000;
+  border: 1px solid #ffb000;
+  cursor: pointer;
+  -webkit-font-smoothing: none;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.personal-os-back-btn:hover {
+  background: rgba(255, 176, 0, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 176, 0, 0.35);
+}
+
+.personal-os-back-btn:focus-visible {
+  outline: 2px solid #ffb000;
+  outline-offset: 2px;
+}
+
+.personal-os-back-btn__icon {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+}
+
+/* Faulty terminal warning strip — full width below hero (PersonalHeroVisual) */
+.personal-hero-warning {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  border: 1px solid rgba(255, 176, 0, 0.42);
+  border-left: 3px solid rgba(255, 90, 70, 0.75);
+  background: rgba(0, 0, 0, 0.72);
+  padding: 8px 12px;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgba(255, 176, 0, 0.92);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 20px rgba(255, 60, 40, 0.08);
+  animation: personal-hero-panel-flicker 3.1s ease-in-out infinite;
+}
+
+@media (min-width: 640px) {
+  .personal-hero-warning {
+    font-size: 11px;
+    padding: 9px 14px;
+  }
+}
+
+.personal-hero-warning-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+}
+
+@media (min-width: 640px) {
+  .personal-hero-warning-inner {
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    column-gap: 0.75rem;
+    row-gap: 0.35rem;
+    align-items: center;
+  }
+}
+
+.personal-hero-warning-line {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .personal-hero-warning-line {
+    text-align: center;
+  }
+}
+
+.personal-hero-warning-line--a {
+  animation: personal-hero-line-flicker 0.22s steps(2, end) infinite;
+}
+.personal-hero-warning-line--b {
+  animation: personal-hero-line-flicker 0.31s steps(2, end) infinite 0.08s;
+}
+.personal-hero-warning-line--c {
+  animation: personal-hero-line-flicker 0.18s steps(2, end) infinite 0.14s;
+  color: rgba(255, 130, 110, 0.95);
+}
+.personal-hero-warning-line--d {
+  animation: personal-hero-line-flicker 0.26s steps(2, end) infinite 0.05s;
+}
+.personal-hero-warning-line--e {
+  animation: personal-hero-line-flicker 0.35s steps(2, end) infinite 0.11s;
+}
+
+@keyframes personal-hero-line-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  35% {
+    opacity: 0.58;
+    transform: translateX(0);
+  }
+  37% {
+    opacity: 0.92;
+    transform: translateX(1px);
+  }
+  51% {
+    opacity: 0.42;
+    transform: translateX(-1px);
+  }
+  53% {
+    opacity: 0.88;
+    transform: translateX(0);
+  }
+}
+
+@keyframes personal-hero-panel-flicker {
+  0%,
+  88%,
+  100% {
+    opacity: 1;
+    border-color: rgba(255, 176, 0, 0.42);
+    box-shadow: 0 0 20px rgba(255, 60, 40, 0.08);
+  }
+  90% {
+    opacity: 0.82;
+    border-color: rgba(255, 120, 90, 0.55);
+    box-shadow: 0 0 28px rgba(255, 80, 40, 0.18);
+  }
+  93% {
+    opacity: 0.96;
+    border-color: rgba(255, 176, 0, 0.35);
+  }
+}
