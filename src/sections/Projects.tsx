@@ -21,7 +21,7 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
-    title: 'BrainTumor3DSegNet',
+    title: 'Brain Tumor Segmentation Tool',
     command: 'run brain_tumor_segnet.py',
     tagline: '3D Medical Image Segmentation | PyTorch',
     problem: 'Accurate brain tumor segmentation from MRI scans is crucial for diagnosis. Manual segmentation is time-consuming and prone to variability.',

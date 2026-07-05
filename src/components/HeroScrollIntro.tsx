@@ -1,5 +1,6 @@
 import { motion, type Transition } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import PortfolioPill from './PortfolioPill'
 
 type HeroScrollIntroProps = {
   scrollRef: React.RefObject<HTMLElement | null>
@@ -8,12 +9,6 @@ type HeroScrollIntroProps = {
 const DESIGN_WIDTH = 1536
 const DESIGN_HEIGHT = 864
 const GITHUB_USERNAME = 'Bandoozle'
-
-const navItems = [
-  { label: 'about', href: '#about' },
-  { label: 'skills', href: '#skills' },
-  { label: 'projects', href: '#projects' },
-]
 
 const contactLinks = [
   { label: 'github', href: 'https://github.com/Bandoozle' },
@@ -44,15 +39,6 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
     height: typeof window === 'undefined' ? DESIGN_HEIGHT : window.innerHeight,
   }))
 
-  const [time, setTime] = useState(() =>
-    new Intl.DateTimeFormat('en-CA', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'America/Vancouver',
-    }).format(new Date()),
-  )
-
   useEffect(() => {
     currentStateRef.current = currentState
   }, [currentState])
@@ -68,21 +54,6 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
     updateViewport()
     window.addEventListener('resize', updateViewport)
     return () => window.removeEventListener('resize', updateViewport)
-  }, [])
-
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setTime(
-        new Intl.DateTimeFormat('en-CA', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-          timeZone: 'America/Vancouver',
-        }).format(new Date()),
-      )
-    }, 1000)
-
-    return () => window.clearInterval(intervalId)
   }, [])
 
   useEffect(() => {
@@ -140,7 +111,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
   }
 
   const subtitleVariants = {
-    state0: { top: '18rem', color: '#171818', opacity: 1, x: '-50%' },
+    state0: { top: '20rem', color: '#0B0B0A', opacity: 1, x: '-50%' },
     state1: { top: '18rem', color: '#818283', opacity: 1, x: '-50%' },
     state2: { top: '2rem', color: '#818283', opacity: 0, x: '-50%' },
     state3: { top: '2rem', color: '#818283', opacity: 0, x: '-50%' },
@@ -184,7 +155,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
       borderRadius: 0,
       clipPath: 'inset(0% 0% 0% 0%)',
       boxShadow: '0 28px 80px rgba(0,0,0,0.12)',
-      backgroundColor: '#ece7dc',
+      backgroundColor: 'transparent',
     },
   }
 
@@ -238,17 +209,10 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
   }
 
   const frameDotVariants = {
-    state0: { opacity: 1 },
+    state0: { opacity: 0 },
     state1: { opacity: 1 },
     state2: { opacity: 1 },
     state3: { opacity: 0 },
-  }
-
-  const navVariants = {
-    state0: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state1: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state2: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state3: { opacity: 1, y: 0, pointerEvents: 'auto' as const },
   }
 
   const roleVariants = {
@@ -300,12 +264,6 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
     state3: { opacity: 0, y: -18 },
   }
 
-  const finalMetaVariants = {
-    state0: { opacity: 0, y: -12 },
-    state1: { opacity: 0, y: -12 },
-    state2: { opacity: 0, y: -12 },
-    state3: { opacity: 1, y: 0 },
-  }
 
   const finalContactVariants = {
     state0: { opacity: 0, y: 18, pointerEvents: 'none' as const },
@@ -318,11 +276,11 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative h-[100dvh] overflow-hidden bg-[#ece7dc] text-[#171818]"
+      className="relative h-[100dvh] overflow-hidden bg-[#E5E5E0] text-[#0B0B0A]"
       aria-label="Portfolio introduction"
     >
       <div
-        className="absolute left-0 top-0 overflow-hidden bg-[#ece7dc]"
+        className="absolute left-0 top-0 overflow-hidden"
         style={{
           width: DESIGN_WIDTH,
           height: DESIGN_HEIGHT,
@@ -336,7 +294,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
           variants={titleVariants}
           transition={springTransition}
         >
-          <h1 className="px-6 text-[200px] font-bold leading-[1.05] tracking-[-0.04em]">
+          <h1 className="px-6 text-[228px] font-bold leading-[1.25] tracking-[-0.04em] text-[#ec4002]" style={{ fontFamily: "'Roboto Flex', Impact, sans-serif" }}>
             MARCO SUTEJA
           </h1>
         </motion.div>
@@ -351,31 +309,32 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.p>
 
         <motion.div
-          className="pointer-events-none absolute bottom-20 left-10 z-[35] max-w-[25rem] text-[#171818]"
+          className="pointer-events-none absolute bottom-16 left-8 z-[35] max-w-[32rem]"
           animate={activeState}
           variants={cornerIntroVariants}
           transition={springTransition}
         >
-          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em]">
-            i&apos;m a full-stack software developer and simon fraser university computer science
-            graduate, based in burnaby, british columbia.
+          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em] text-[#0B0B0A]">
+            i&apos;m a full-stack software developer and simon fraser university
+            computer science graduate, based in burnaby, british columbia.
           </p>
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute bottom-20 right-10 z-[35] max-w-[27rem] text-right text-[#171818]"
+          className="pointer-events-none absolute bottom-16 right-12 z-[35] max-w-[32rem] text-right"
           animate={activeState}
           variants={cornerIntroVariants}
           transition={springTransition}
         >
-          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em]">
-            i help teams ship usable products by blending machine learning, modern web stacks, and
-            interfaces that stay clear and human-centered.
+          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em] text-[#0B0B0A]">
+            i help teams ship usable products by blending machine learning,
+            modern web stacks, and interfaces that stay clear and
+            human-centered.
           </p>
         </motion.div>
 
         <motion.div
-          className="absolute left-1/2 z-10 -translate-x-1/2 overflow-hidden bg-[#ece7dc]"
+          className="absolute left-1/2 z-10 -translate-x-1/2 overflow-hidden"
           animate={activeState}
           variants={imageVariants}
           transition={springTransition}
@@ -405,7 +364,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
           ].map((cornerClass) => (
             <motion.span
               key={cornerClass}
-              className={`pointer-events-none absolute bg-[#171818] ${cornerClass}`}
+              className={`pointer-events-none absolute bg-[#0B0B0A] ${cornerClass}`}
               animate={activeState}
               variants={frameDotVariants}
               transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -415,7 +374,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute left-14 top-[45%] z-30 max-w-[25rem] text-[#171818]"
+          className="pointer-events-none absolute left-14 top-[45%] z-30 max-w-[25rem] text-[#0B0B0A]"
           animate={activeState}
           variants={curiosityStoryVariants}
           transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
@@ -436,7 +395,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
           {curiosityFragments.map((fragment, index) => (
             <motion.span
               key={fragment.label}
-              className="absolute transform-gpu rounded-full px-5 py-2 text-[34px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#171818]"
+              className="absolute transform-gpu rounded-full px-5 py-2 text-[34px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#0B0B0A]"
               style={{
                 left: fragment.x,
                 top: fragment.y,
@@ -464,7 +423,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute right-[16rem] top-[35%] z-30 max-w-[27rem] text-right text-[#171818]"
+          className="pointer-events-none absolute right-[16rem] top-[35%] z-30 max-w-[27rem] text-right text-[#0B0B0A]"
           animate={activeState}
           variants={sfuStoryVariants}
           transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
@@ -476,7 +435,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.div>
 
         <motion.p
-          className="instrument-serif-italic absolute left-[250px] top-[25%] z-40 text-[65px] font-semibold leading-none tracking-[-0.02em] text-[#171818]"
+          className="instrument-serif-italic absolute left-[250px] top-[25%] z-40 text-[65px] font-semibold leading-none tracking-[-0.02em] text-[#0B0B0A]"
           animate={activeState}
           variants={githubContributionVariants}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -492,7 +451,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
           variants={githubContributionVariants}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="w-[1100px] overflow-hidden bg-[#ece7dc] px-2 py-1">
+          <div className="w-[1100px] overflow-hidden bg-[#E5E5E0] px-2 py-1">
             <img
               src={`https://ghchart.rshah.org/ec4002/${GITHUB_USERNAME}`}
               alt={`${GITHUB_USERNAME} GitHub contribution chart`}
@@ -502,53 +461,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.div>
 
         <motion.div
-          className="absolute left-10 top-10 z-50 flex items-center gap-3"
-          animate={activeState}
-          variants={finalContactVariants}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {contactLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-white px-5 py-2 text-[28px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#171818] transition-transform hover:-translate-y-1"
-            >
-              {link.label}
-            </a>
-          ))}
-        </motion.div>
-
-        <motion.div
-          className="absolute right-10 top-10 z-50"
-          animate={activeState}
-          variants={finalContactVariants}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <a
-            href={resumeHref}
-            target="_blank"
-            rel="noreferrer"
-            className="block rounded-full bg-[#F7C8D8] px-6 py-3 text-[28px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#171818] transition-transform hover:-translate-y-1 hover:bg-[#ec4002] hover:text-white"
-          >
-            resume
-          </a>
-        </motion.div>
-
-        <motion.div
-          className="absolute right-[210px] top-[47px] z-50 flex items-center gap-3 text-[28px] font-black lowercase tracking-[-0.05em] text-[#171818]"
-          animate={activeState}
-          variants={finalContactVariants}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p>◎ burnaby, bc</p>
-          <span aria-hidden>·</span>
-          <time dateTime={time}>{time} pt</time>
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute bottom-10 left-1/2 z-20 -translate-x-1/2 text-[#171818]"
+          className="pointer-events-none absolute bottom-10 left-1/2 z-20 -translate-x-1/2 text-[#0B0B0A]"
           animate={activeState}
           variants={scrollHintVariants}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -564,7 +477,7 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
         </motion.div>
 
         <motion.p
-          className="instrument-serif-italic absolute bottom-10 left-10 z-30 text-[65px] font-semibold leading-none tracking-[-0.03em] text-[#171818]"
+          className="instrument-serif-italic absolute bottom-10 left-11 z-30 text-[65px] font-semibold leading-none tracking-[-0.03em] text-[#0B0B0A]"
           animate={activeState}
           variants={roleVariants}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -572,37 +485,39 @@ const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
           Full-Stack Software Developer
         </motion.p>
 
-        <motion.nav
-  className="absolute bottom-10 right-10 z-30"
-  animate={activeState}
-  variants={navVariants}
-  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-  aria-label="Portfolio sections"
->
-  <ul className="flex items-center gap-4">
-    {navItems.map((item, index) => {
-      const pillColors = [
-        '#F7C8D8',
-        '#C9D8FF',
-        '#CDEED6',
-      ]
+        {/* Top nav — rendered last so it stacks above the state-3 portrait panel */}
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-0 z-[100] px-10 pt-10"
+          animate={activeState}
+          variants={finalContactVariants}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="pointer-events-auto flex items-start justify-between gap-6">
+            <div className="flex flex-wrap items-center gap-3">
+              {contactLinks.map((link) => (
+                <PortfolioPill
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  size="lg"
+                >
+                  {link.label}
+                </PortfolioPill>
+              ))}
+            </div>
 
-      return (
-        <li key={item.href}>
-          <a
-            href={item.href}
-            className="block rounded-full px-6 py-3 text-[28px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#171818] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ec4002] hover:text-white"
-            style={{
-              backgroundColor: pillColors[index % pillColors.length],
-            }}
-          >
-            {item.label}
-          </a>
-        </li>
-      )
-    })}
-  </ul>
-</motion.nav>
+            <PortfolioPill
+              href={resumeHref}
+              target="_blank"
+              rel="noreferrer"
+              size="lg"
+              showArrow
+            >
+              resume
+            </PortfolioPill>
+          </div>
+        </motion.div>
       </div>
     </section>
   )
