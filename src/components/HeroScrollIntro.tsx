@@ -1,525 +1,204 @@
-import { motion, type Transition } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { portfolioProjects } from '../data/portfolioProjects'
 import PortfolioPill from './PortfolioPill'
 
 type HeroScrollIntroProps = {
   scrollRef: React.RefObject<HTMLElement | null>
 }
 
-const DESIGN_WIDTH = 1536
-const DESIGN_HEIGHT = 864
-const GITHUB_USERNAME = 'Bandoozle'
+const FONT_DISPLAY = {
+  fontFamily: "'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif",
+  fontStyle: 'normal' as const,
+}
 
-const contactLinks = [
-  { label: 'github', href: 'https://github.com/Bandoozle' },
-  { label: 'linkedin', href: 'https://linkedin.com/in/marcosuteja' },
-  { label: 'instagram', href: 'https://instagram.com/marcostja' },
-]
+const FONT_BODY = {
+  fontFamily: "'Satoshi', 'Inter', 'Helvetica Neue', Arial, sans-serif",
+  fontStyle: 'normal' as const,
+}
 
-const resumeHref = '/resume.pdf'
+const EASE = [0.22, 1, 0.36, 1] as const
 
-const curiosityFragments = [
-  { label: 'interfaces', x: 160, y: 30, bg: '#F7C8D8' },
-  { label: 'logic', x: 30, y: 30, bg: '#C9D8FF' },
-  { label: 'systems', x: 30, y: 100, bg: '#CDEED6' },
-  { label: 'patterns', x: 210, y: 100, bg: '#FFE1A8' },
-  { label: 'curiosity', x: 30, y: 170, bg: '#D8C7FF' },
-]
+const heroTitles = ['Marco Suteja', 'Full-Stack Developer'] as const
 
-const stateKey = (state: number) => `state${state}`
+const heroStats = [
+  { value: '2024', label: 'SFU CS graduate' },
+  { value: `${portfolioProjects.length}+`, label: 'projects shipped' },
+] as const
 
-const HeroScrollIntro = ({ scrollRef }: HeroScrollIntroProps) => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const isWheelLockedRef = useRef(false)
-  const currentStateRef = useRef(0)
+const introStats = [
+  { value: `${portfolioProjects.length}+`, label: 'Projects delivered' },
+  { value: 'ML + Web', label: 'Core focus areas' },
+  { value: 'SFU', label: 'Computer Science' },
+] as const
 
-  const [currentState, setCurrentState] = useState(0)
-  const [viewport, setViewport] = useState(() => ({
-    width: typeof window === 'undefined' ? DESIGN_WIDTH : window.innerWidth,
-    height: typeof window === 'undefined' ? DESIGN_HEIGHT : window.innerHeight,
-  }))
+const HeroTitleRotator = () => {
+  const [index, setIndex] = useState(0)
 
   useEffect(() => {
-    currentStateRef.current = currentState
-  }, [currentState])
-
-  useEffect(() => {
-    const updateViewport = () => {
-      setViewport({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      })
-    }
-
-    updateViewport()
-    window.addEventListener('resize', updateViewport)
-    return () => window.removeEventListener('resize', updateViewport)
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % heroTitles.length)
+    }, 3200)
+    return () => window.clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
-
-    const unlockWheel = () => {
-      window.setTimeout(() => {
-        isWheelLockedRef.current = false
-      }, 720)
-    }
-
-    const handleWheel = (event: WheelEvent) => {
-      const state = currentStateRef.current
-      const isScrollingDown = event.deltaY > 0
-      const isScrollingUp = event.deltaY < 0
-
-      const shouldAdvanceState = isScrollingDown && state < 3
-      const shouldReverseState = isScrollingUp && state > 0
-
-      if (!shouldAdvanceState && !shouldReverseState) return
-
-      event.preventDefault()
-
-      if (isWheelLockedRef.current || Math.abs(event.deltaY) < 6) return
-
-      isWheelLockedRef.current = true
-      setCurrentState((previous) => previous + (isScrollingDown ? 1 : -1))
-      unlockWheel()
-    }
-
-    section.addEventListener('wheel', handleWheel, { passive: false })
-    return () => section.removeEventListener('wheel', handleWheel)
-  }, [scrollRef])
-
-  const activeState = stateKey(currentState)
-
-  const scale = viewport.width / DESIGN_WIDTH
-  const scaledHeight = DESIGN_HEIGHT * scale
-  const offsetX = 0
-  const offsetY = Math.max(0, (viewport.height - scaledHeight) / 2)
-
-  const springTransition: Transition = {
-    type: 'spring',
-    stiffness: 120,
-    damping: 24,
-    mass: 0.85,
-  }
-
-  const titleVariants = {
-    state0: { y: 0, opacity: 1, scale: 1 },
-    state1: { y: -310, opacity: 0, scale: 1 },
-    state2: { y: -310, opacity: 0, scale: 1 },
-    state3: { y: -310, opacity: 0, scale: 1 },
-  }
-
-  const subtitleVariants = {
-    state0: { top: '20rem', color: '#0B0B0A', opacity: 1, x: '-50%' },
-    state1: { top: '18rem', color: '#818283', opacity: 1, x: '-50%' },
-    state2: { top: '2rem', color: '#818283', opacity: 0, x: '-50%' },
-    state3: { top: '2rem', color: '#818283', opacity: 0, x: '-50%' },
-  }
-
-  const imageVariants = {
-    state0: {
-      top: '50%',
-      width: 230,
-      height: 278,
-      borderRadius: 0,
-      clipPath: 'inset(0% 0% 0% 0%)',
-      boxShadow: '0 0 0 rgba(0,0,0,0)',
-      backgroundColor: '#F8E8E2',
-    },
-
-    state1: {
-      top: '43%',
-      width: 584,
-      height: 195,
-      borderRadius: 0,
-      clipPath: 'inset(0% 0% 0% 0%)',
-      boxShadow: '0 18px 55px rgba(0,0,0,0.08)',
-      backgroundColor: '#F3EAD8',
-    },
-
-    state2: {
-      top: '22%',
-      width: 1106,
-      height: 403,
-      borderRadius: 0,
-      clipPath: 'inset(0% 0% 0% 0%)',
-      boxShadow: '0 24px 70px rgba(0,0,0,0.1)',
-      backgroundColor: '#E8EFE5',
-    },
-
-    state3: {
-      top: '0%',
-      width: DESIGN_WIDTH,
-      height: 720,
-      borderRadius: 0,
-      clipPath: 'inset(0% 0% 0% 0%)',
-      boxShadow: '0 28px 80px rgba(0,0,0,0.12)',
-      backgroundColor: 'transparent',
-    },
-  }
-
-  const imageContentVariants = {
-    state0: {
-      top: '80%',
-      scale: 1,
-      objectPosition: 'center center',
-    },
-
-    state1: {
-      top: '105%',
-      scale: 1,
-      objectPosition: 'center center',
-    },
-
-    state2: {
-      top: '60%',
-      scale: 1,
-      objectPosition: 'center center',
-    },
-
-    state3: {
-      top: '78%',
-      scale: 2,
-      objectPosition: 'center center',
-    },
-  }
-
-  const frameVariants = {
-    state0: {
-      borderWidth: 1,
-      borderColor: '#a9a9a0',
-      boxShadow: '0 0 0 rgba(0,0,0,0)',
-    },
-    state1: {
-      borderWidth: 1,
-      borderColor: '#9f9f96',
-      boxShadow: '0 18px 55px rgba(0,0,0,0.08)',
-    },
-    state2: {
-      borderWidth: 1,
-      borderColor: '#8f8f86',
-      boxShadow: '0 24px 70px rgba(0,0,0,0.1)',
-    },
-    state3: {
-      borderWidth: 0,
-      borderColor: '#7f7f77',
-      boxShadow: '0 28px 80px rgba(0,0,0,0.12)',
-    },
-  }
-
-  const frameDotVariants = {
-    state0: { opacity: 0 },
-    state1: { opacity: 1 },
-    state2: { opacity: 1 },
-    state3: { opacity: 0 },
-  }
-
-  const roleVariants = {
-    state0: { opacity: 0, y: 18 },
-    state1: { opacity: 0, y: 18 },
-    state2: { opacity: 0, y: 18 },
-    state3: { opacity: 1, y: 0 },
-  }
-
-  const scrollHintVariants = {
-    state0: { opacity: 1, y: 0 },
-    state1: { opacity: 0, y: -10 },
-    state2: { opacity: 0, y: -10 },
-    state3: { opacity: 0, y: -10 },
-  }
-
-  const cornerIntroVariants = {
-    state0: { opacity: 1, y: 0 },
-    state1: { opacity: 0, y: 10 },
-    state2: { opacity: 0, y: 10 },
-    state3: { opacity: 0, y: 10 },
-  }
-
-  const curiosityStoryVariants = {
-    state0: { opacity: 0, y: 18 },
-    state1: { opacity: 1, y: 0 },
-    state2: { opacity: 0, y: -18 },
-    state3: { opacity: 0, y: -18 },
-  }
-
-  const fragmentContainerVariants = {
-    state0: { opacity: 0, y: 16, scale: 0.96 },
-    state1: { opacity: 1, y: 0, scale: 1 },
-    state2: { opacity: 0, y: -16, scale: 0.96 },
-    state3: { opacity: 0, y: -16, scale: 0.96 },
-  }
-
-  const sfuStoryVariants = {
-    state0: { opacity: 0, y: 18 },
-    state1: { opacity: 0, y: 18 },
-    state2: { opacity: 1, y: 0 },
-    state3: { opacity: 0, y: -18 },
-  }
-
-  const githubContributionVariants = {
-    state0: { opacity: 0, y: 18 },
-    state1: { opacity: 0, y: 18 },
-    state2: { opacity: 1, y: 0 },
-    state3: { opacity: 0, y: -18 },
-  }
-
-
-  const finalContactVariants = {
-    state0: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state1: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state2: { opacity: 0, y: 18, pointerEvents: 'none' as const },
-    state3: { opacity: 1, y: 0, pointerEvents: 'auto' as const },
-  }
-
   return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      className="relative h-[100dvh] overflow-hidden bg-[#E5E5E0] text-[#0B0B0A]"
-      aria-label="Portfolio introduction"
-    >
-      <div
-        className="absolute left-0 top-0 overflow-hidden"
-        style={{
-          width: DESIGN_WIDTH,
-          height: DESIGN_HEIGHT,
-          transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
-          transformOrigin: 'top left',
-        }}
-      >
-        <motion.div
-          className="absolute left-2 top-3 z-20 w-[1520px]"
-          animate={activeState}
-          variants={titleVariants}
-          transition={springTransition}
+    <div className="relative h-[clamp(4.5rem,14vw,11rem)] overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.h1
+          key={heroTitles[index]}
+          initial={{ y: '110%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-110%', opacity: 0 }}
+          transition={{ duration: 0.55, ease: EASE }}
+          className="absolute inset-x-0 top-0 text-[clamp(3.5rem,13vw,10rem)] font-bold uppercase leading-[0.88] tracking-[-0.04em] text-[#0B0B0A]"
+          style={FONT_DISPLAY}
         >
-          <h1 className="px-6 text-[228px] font-bold leading-[1.25] tracking-[-0.04em] text-[#ec4002]" style={{ fontFamily: "'Roboto Flex', Impact, sans-serif" }}>
-            MARCO SUTEJA
-          </h1>
-        </motion.div>
+          {heroTitles[index]}
+        </motion.h1>
+      </AnimatePresence>
+    </div>
+  )
+}
 
-        <motion.p
-          className="instrument-serif-italic absolute left-1/2 z-[4] whitespace-nowrap text-[65px] font-semibold leading-none tracking-[-0.02em]"
-          animate={activeState}
-          variants={subtitleVariants}
-          transition={springTransition}
-        >
-          Personal Portfolio Website
-        </motion.p>
-
-        <motion.div
-          className="pointer-events-none absolute bottom-16 left-8 z-[35] max-w-[32rem]"
-          animate={activeState}
-          variants={cornerIntroVariants}
-          transition={springTransition}
-        >
-          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em] text-[#0B0B0A]">
-            i&apos;m a full-stack software developer and simon fraser university
-            computer science graduate, based in burnaby, british columbia.
+const HeroScrollIntro = (_props: HeroScrollIntroProps) => {
+  return (
+    <div id="hero" className="bg-[#E5E5E0] text-[#0B0B0A]">
+      {/* ── Nexola-style hero viewport ── */}
+      <section className="relative flex min-h-[100dvh] flex-col px-3 sm:px-4 md:px-5 lg:px-6" aria-label="Portfolio introduction">
+        <header className="flex items-center justify-between gap-4 pt-6 md:pt-8">
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-[#0B0B0A]" style={FONT_DISPLAY}>
+            Marco Suteja®
           </p>
-        </motion.div>
 
-        <motion.div
-          className="pointer-events-none absolute bottom-16 right-12 z-[35] max-w-[32rem] text-right"
-          animate={activeState}
-          variants={cornerIntroVariants}
-          transition={springTransition}
-        >
-          <p className="text-[34px] font-semibold leading-[0.95] tracking-[-0.05em] text-[#0B0B0A]">
-            i help teams ship usable products by blending machine learning,
-            modern web stacks, and interfaces that stay clear and
-            human-centered.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="absolute left-1/2 z-10 -translate-x-1/2 overflow-hidden"
-          animate={activeState}
-          variants={imageVariants}
-          transition={springTransition}
-        >
-          <motion.img
-            src="/hero_marco.png"
-            alt="Marco Areliano S portrait"
-            className="absolute left-1/2 top-1/2 h-[542px] w-[1536px] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain mix-blend-multiply"
-            animate={activeState}
-            variants={imageContentVariants}
-            transition={springTransition}
-          />
-
-          <motion.div
-            className="pointer-events-none absolute inset-0 border-solid"
-            animate={activeState}
-            variants={frameVariants}
-            transition={springTransition}
-            aria-hidden
-          />
-
-          {[
-            'left-0 top-0 -translate-x-1/2 -translate-y-1/2',
-            'right-0 top-0 translate-x-1/2 -translate-y-1/2',
-            'bottom-0 left-0 -translate-x-1/2 translate-y-1/2',
-            'bottom-0 right-0 translate-x-1/2 translate-y-1/2',
-          ].map((cornerClass) => (
-            <motion.span
-              key={cornerClass}
-              className={`pointer-events-none absolute bg-[#0B0B0A] ${cornerClass}`}
-              animate={activeState}
-              variants={frameDotVariants}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              aria-hidden
-            />
-          ))}
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute left-14 top-[45%] z-30 max-w-[25rem] text-[#0B0B0A]"
-          animate={activeState}
-          variants={curiosityStoryVariants}
-          transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="mt-3 text-[34px] font-semibold leading-[0.95] tracking-[-0.05em]">
-            i started by taking things apart, asking how interfaces, systems, and intelligence
-            actually work.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute left-[70%] top-[40%] z-30 h-[20rem] w-[26rem]"
-          animate={activeState}
-          variants={fragmentContainerVariants}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          aria-hidden
-        >
-          {curiosityFragments.map((fragment, index) => (
-            <motion.span
-              key={fragment.label}
-              className="absolute transform-gpu rounded-full px-5 py-2 text-[34px] font-semibold lowercase leading-none tracking-[-0.05em] text-[#0B0B0A]"
-              style={{
-                left: fragment.x,
-                top: fragment.y,
-                backgroundColor: fragment.bg,
-              }}
-              animate={
-                activeState === 'state1'
-                  ? {
-                      y: [0, -5, 0],
-                    }
-                  : {
-                      y: 0,
-                    }
-              }
-              transition={{
-                duration: 4.5 + index * 0.25,
-                repeat: activeState === 'state1' ? Infinity : 0,
-                ease: 'easeInOut',
-                delay: index * 0.18,
-              }}
-            >
-              {fragment.label}
-            </motion.span>
-          ))}
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute right-[16rem] top-[35%] z-30 max-w-[27rem] text-right text-[#0B0B0A]"
-          animate={activeState}
-          variants={sfuStoryVariants}
-          transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="mt-3 text-[34px] font-semibold leading-[0.95] tracking-[-0.05em]">
-            that curiosity became a computer science degree from simon fraser university, shaped by
-            ai, full-stack products, and usable systems.
-          </p>
-        </motion.div>
-
-        <motion.p
-          className="instrument-serif-italic absolute left-[250px] top-[25%] z-40 text-[65px] font-semibold leading-none tracking-[-0.02em] text-[#0B0B0A]"
-          animate={activeState}
-          variants={githubContributionVariants}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Recent
-          <br />
-          Contributions
-        </motion.p>
-
-        <motion.div
-          className="pointer-events-none absolute left-1/2 top-[72%] z-40 flex -translate-x-1/2 flex-col items-center"
-          animate={activeState}
-          variants={githubContributionVariants}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="w-[1100px] overflow-hidden bg-[#E5E5E0] px-2 py-1">
-            <img
-              src={`https://ghchart.rshah.org/ec4002/${GITHUB_USERNAME}`}
-              alt={`${GITHUB_USERNAME} GitHub contribution chart`}
-              className="h-auto w-full"
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="pointer-events-none absolute bottom-10 left-1/2 z-20 -translate-x-1/2 text-[#0B0B0A]"
-          animate={activeState}
-          variants={scrollHintVariants}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          aria-hidden
-        >
-          <motion.span
-            className="block text-[42px] leading-none"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            ↓
-          </motion.span>
-        </motion.div>
-
-        <motion.p
-          className="instrument-serif-italic absolute bottom-10 left-11 z-30 text-[65px] font-semibold leading-none tracking-[-0.03em] text-[#0B0B0A]"
-          animate={activeState}
-          variants={roleVariants}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Full-Stack Software Developer
-        </motion.p>
-
-        {/* Top nav — rendered last so it stacks above the state-3 portrait panel */}
-        <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 z-[100] px-10 pt-10"
-          animate={activeState}
-          variants={finalContactVariants}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="pointer-events-auto flex items-start justify-between gap-6">
-            <div className="flex flex-wrap items-center gap-3">
-              {contactLinks.map((link) => (
-                <PortfolioPill
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  size="lg"
-                >
-                  {link.label}
-                </PortfolioPill>
-              ))}
-            </div>
-
-            <PortfolioPill
-              href={resumeHref}
-              target="_blank"
-              rel="noreferrer"
-              size="lg"
-              showArrow
-            >
-              resume
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="hidden items-center gap-2 sm:inline-flex">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0B0B0A]/25" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0B0B0A]" />
+              </span>
+              <span className="text-[0.68rem] font-medium uppercase tracking-[0.14em] text-[#0B0B0A]/55" style={FONT_DISPLAY}>
+                Available for work
+              </span>
+            </span>
+            <PortfolioPill href="#projects" size="md" variant="primary" showArrow>
+              View projects
             </PortfolioPill>
           </div>
-        </motion.div>
-      </div>
-    </section>
+        </header>
+
+        <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center pb-16 pt-10 md:pb-20 md:pt-14">
+          <HeroTitleRotator />
+
+          <div className="mt-10 grid max-w-xl grid-cols-2 gap-8 md:mt-14 md:gap-12">
+            {heroStats.map((stat) => (
+              <div key={stat.label}>
+                <p
+                  className="text-[clamp(1.75rem,4vw,2.75rem)] font-bold uppercase leading-none tracking-[-0.03em] text-[#0B0B0A]"
+                  style={FONT_DISPLAY}
+                >
+                  {stat.value}
+                </p>
+                <p className="mt-2 text-[0.72rem] uppercase tracking-[0.12em] text-[#0B0B0A]/45" style={FONT_BODY}>
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-3 md:mt-12">
+            <PortfolioPill href="#projects" size="md" variant="primary" showArrow>
+              View projects
+            </PortfolioPill>
+            <PortfolioPill
+              href="https://linkedin.com/in/marcosuteja"
+              target="_blank"
+              rel="noreferrer"
+              size="md"
+              variant="outline"
+              showArrow
+            >
+              Book a call
+            </PortfolioPill>
+          </div>
+        </div>
+
+        <div className="overflow-hidden border-t border-solid py-5" style={{ borderColor: 'rgba(11, 11, 10, 0.08)' }}>
+          <div className="animate-marquee flex w-max whitespace-nowrap">
+            {[0, 1].map((copy) => (
+              <div key={copy} className="flex shrink-0 items-center">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <span
+                    key={`${copy}-${i}`}
+                    className="mx-6 text-[clamp(3rem,8vw,6rem)] font-bold uppercase leading-none tracking-[-0.04em] text-[#0B0B0A]/[0.06]"
+                    style={FONT_DISPLAY}
+                  >
+                    Marco Suteja
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Nexola-style introduction block ── */}
+      <section className="border-t border-solid px-3 py-[12vh] sm:px-4 md:px-5 md:py-[14vh] lg:px-6" style={{ borderColor: 'rgba(11, 11, 10, 0.08)' }}>
+        <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-12 lg:grid-cols-[1fr_minmax(280px,36%)] lg:gap-20">
+          <div>
+            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#0B0B0A]/40" style={FONT_DISPLAY}>
+              Introduction
+            </p>
+
+            <h2
+              className="mt-5 max-w-[18ch] text-[clamp(1.75rem,4vw,3rem)] font-bold uppercase leading-[0.95] tracking-[-0.03em] text-[#0B0B0A]"
+              style={FONT_DISPLAY}
+            >
+              Full-stack developer focused on systems that ship.
+            </h2>
+
+            <blockquote className="instrument-serif-italic mt-8 max-w-[42ch] text-[1.05rem] leading-[1.6] text-[#0B0B0A]/62 md:text-[1.15rem]">
+              &ldquo;Great software shouldn&apos;t just work — it should solve real problems with clarity,
+              performance, and intent.&rdquo;
+            </blockquote>
+
+            <div className="mt-12 grid grid-cols-1 gap-8 border-t border-solid pt-10 sm:grid-cols-3 sm:gap-6" style={{ borderColor: 'rgba(11, 11, 10, 0.08)' }}>
+              {introStats.map((stat) => (
+                <div key={stat.label}>
+                  <p
+                    className="text-[clamp(1.5rem,3vw,2.25rem)] font-bold uppercase leading-none tracking-[-0.02em] text-[#0B0B0A]"
+                    style={FONT_DISPLAY}
+                  >
+                    {stat.value}
+                  </p>
+                  <p className="mt-2 text-[0.68rem] uppercase tracking-[0.12em] text-[#0B0B0A]/42" style={FONT_BODY}>
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-between gap-8 lg:items-end">
+            <div className="w-full max-w-[320px] overflow-hidden bg-[#191816] lg:ml-auto">
+              <img src="/hero_marco.png" alt="Marco Suteja" className="aspect-[4/5] w-full object-cover object-top" />
+            </div>
+
+            <div className="lg:text-right">
+              <p className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-[#0B0B0A]/40" style={FONT_DISPLAY}>
+                Marco Suteja
+              </p>
+              <p className="mt-1 text-[0.95rem] font-semibold uppercase tracking-[0.08em] text-[#0B0B0A]" style={FONT_DISPLAY}>
+                Full-Stack Developer
+              </p>
+              <p className="mt-4 max-w-[28ch] text-[0.88rem] leading-[1.65] text-[#0B0B0A]/58 lg:ml-auto" style={FONT_BODY}>
+                Burnaby, BC — open to full-time roles, remote work, and relocation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }
 

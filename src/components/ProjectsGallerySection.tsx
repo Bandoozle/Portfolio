@@ -68,15 +68,40 @@ const columnOffsetY = (progress: MotionValue<number>, columnIndex: number) => {
   return useTransform(progress, (p) => (p - 0.5) * speed * 2.2)
 }
 
-const imagePanelOpacity = (
-  progress: MotionValue<number>,
-  columnIndex: number,
-  cardIndex: number,
-) => {
-  const phase = columnIndex * 0.07 + cardIndex * 0.04
+/** Stable 0–1 value from project id — same panel always gets the same profile. */
+const seededUnit = (seed: number) => {
+  const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453
+  return value - Math.floor(value)
+}
+
+type PanelFadeProfile = {
+  peak: number
+  width: number
+  maxOpacity: number
+}
+
+const getPanelFadeProfile = (projectId: number): PanelFadeProfile => {
+  const r1 = seededUnit(projectId * 17 + 3)
+  const r2 = seededUnit(projectId * 41 + 7)
+  const r3 = seededUnit(projectId * 59 + 11)
+
+  return {
+    peak: 0.1 + r1 * 0.8,
+    width: 0.12 + r2 * 0.24,
+    maxOpacity: 0.78 + r3 * 0.22,
+  }
+}
+
+const panelFadeProfiles = new Map(portfolioProjects.map((project) => [project.id, getPanelFadeProfile(project.id)]))
+
+const imagePanelOpacity = (progress: MotionValue<number>, projectId: number) => {
+  const profile = panelFadeProfiles.get(projectId) ?? getPanelFadeProfile(projectId)
+
   return useTransform(progress, (p) => {
-    const centered = 1 - Math.min(1, Math.abs(p - 0.42 + phase) * 2.4)
-    return 0.32 + centered * 0.68
+    const dist = Math.abs(p - profile.peak)
+    const linear = Math.max(0, 1 - dist / profile.width)
+    const smooth = linear * linear * (3 - 2 * linear)
+    return smooth * profile.maxOpacity
   })
 }
 
@@ -317,7 +342,7 @@ const WaveGridCard = ({
   scrollProgress: MotionValue<number>
   onSelect: (id: number) => void
 }) => {
-  const imageOpacity = imagePanelOpacity(scrollProgress, colIndex, cardIndex)
+  const imageOpacity = imagePanelOpacity(scrollProgress, project.id)
 
   return (
     <GridProjectCard

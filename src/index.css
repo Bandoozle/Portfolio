@@ -33,7 +33,62 @@
   font-display: swap;
 }
 
-/* Case file / scrapbook accents (projects section) */
+/* Hero fonts */
+@font-face {
+  font-family: 'Brunson';
+  src: url('/fonts/brunson/Brunson.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pink Average';
+  src:
+    url('/fonts/pink-average/PinkAverage-Regular.otf') format('opentype'),
+    url('/fonts/pink-average/PinkAverage-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pink Average';
+  src:
+    url('/fonts/pink-average/PinkAverage-Italic.otf') format('opentype'),
+    url('/fonts/pink-average/PinkAverage-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Hero display + utility type */
+.hero-mega-type {
+  font-family: 'Brunson', 'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.004em;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.hero-util-type {
+  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-subtitle-type {
+  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.hero-section-scope {
+  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
+}
+
 .font-case-hand {
   font-family: 'Art Post Black', cursive;
   font-weight: 900;

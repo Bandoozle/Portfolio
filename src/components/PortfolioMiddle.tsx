@@ -10,7 +10,7 @@
  */
 
 import { AnimatePresence, motion, useInView, useMotionValue, useTransform, type MotionValue } from 'framer-motion'
-import { Github, Instagram, Linkedin } from 'lucide-react'
+import { ExternalLink, Github, Instagram, Linkedin } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import ProjectsGallerySection from './ProjectsGallerySection'
 
@@ -54,7 +54,7 @@ const WhatIBuildSection = () => {
   const activeItem = activeIndex !== null ? competencies[activeIndex] : null
 
   return (
-    <section ref={ref} className="bg-[#0B0B0A] py-[14vh] text-[#E5E5E0]">
+    <section ref={ref} id="competencies" className="bg-[#0B0B0A] py-[14vh] text-[#E5E5E0]">
       <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
         <div className="grid grid-cols-1 items-start gap-12 md:grid-cols-[minmax(240px,28%)_1fr] md:gap-16 lg:gap-24">
           <motion.div
@@ -145,15 +145,9 @@ const WhatIBuildSection = () => {
 // 4. PROCESS — scroll-driven card track logic only
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PROCESS_PANEL_TINTS = ['#191816', '#1c1b18', '#222220', '#252522']
+const PROCESS_PANEL_TINTS = ['#191816', '#1c1b18', '#222220']
 
 const processCards = [
-  {
-    number: '00',
-    title: 'Project Approach Steps',
-    description: 'How every project moves from problem to production.',
-    bullets: [] as string[],
-  },
   {
     number: '01',
     title: 'Diagnose',
@@ -328,16 +322,12 @@ const ProcessCarouselCard = ({
   scrollProgress,
   layoutRef,
   layout,
-  isExpanded,
-  onToggle,
 }: {
   card: (typeof processCards)[number]
   index: number
   scrollProgress: MotionValue<number>
   layoutRef: RefObject<CarouselLayout>
   layout: CarouselLayout
-  isExpanded: boolean
-  onToggle: () => void
 }) => {
   const x = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).x)
   const y = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).y)
@@ -346,8 +336,6 @@ const ProcessCarouselCard = ({
   const opacity = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).opacity)
   const zIndex = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).zIndex)
 
-  const hasDetail = card.bullets.length > 0
-  const isIntro = index === 0
   const halfW = layout.cardWidth / 2
   const halfH = layout.cardHeight / 2
 
@@ -368,126 +356,163 @@ const ProcessCarouselCard = ({
       className="absolute left-1/2 top-1/2 will-change-transform"
     >
       <div
-        className="group relative h-full w-full overflow-hidden"
+        className="relative h-full w-full overflow-hidden"
         style={{ backgroundColor: PROCESS_PANEL_TINTS[index % PROCESS_PANEL_TINTS.length] }}
       >
-        {isIntro ? (
-          <div className="absolute inset-0 flex items-center justify-center p-8">
-            <p
-              className="text-center text-[clamp(1.75rem,5vw,3.25rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-[#E5E5E0]"
-              style={FONT_DISPLAY}
-            >
-              Project
-              <br />
-              Approach
-              <br />
-              Steps
-            </p>
-          </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.1]">
-            <span
-              className="text-[clamp(3rem,8vw,5.5rem)] font-bold uppercase tracking-[-0.04em] text-[#E5E5E0]"
-              style={FONT_DISPLAY}
-              aria-hidden
-            >
-              {card.number}
-            </span>
-          </div>
-        )}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.1]">
+          <span
+            className="text-[clamp(3rem,8vw,5.5rem)] font-bold uppercase tracking-[-0.04em] text-[#E5E5E0]"
+            style={FONT_DISPLAY}
+            aria-hidden
+          >
+            {card.number}
+          </span>
+        </div>
 
-        {!isIntro && (
-          <div className="absolute inset-x-0 bottom-0 z-[2] flex items-end justify-between gap-3 bg-gradient-to-t from-[#0B0B0A]/85 via-[#0B0B0A]/40 to-transparent p-4 md:p-5">
-            <p
-              className="max-w-[16ch] text-[0.58rem] font-semibold uppercase leading-[1.35] tracking-[0.16em] text-[#E5E5E0]"
-              style={FONT_DISPLAY}
-            >
-              {card.title}
-            </p>
-            {hasDetail ? (
-              <button
-                type="button"
-                onClick={onToggle}
-                aria-expanded={isExpanded}
-                aria-label={`${isExpanded ? 'Close' : 'Open'} ${card.title} details`}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-solid text-[#E5E5E0]/70 transition-all duration-300 hover:border-[#E5E5E0]/50 hover:text-[#E5E5E0]"
-                style={{ borderColor: 'rgba(229, 229, 224, 0.25)' }}
-              >
-                <span className={`text-sm leading-none transition-transform duration-300 ${isExpanded ? 'rotate-45' : ''}`}>
-                  +
-                </span>
-              </button>
-            ) : null}
-          </div>
-        )}
-
-        <AnimatePresence>
-          {isExpanded && hasDetail && (
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 z-[3] flex flex-col justify-end bg-[#0B0B0A]/92 p-5 md:p-6"
-            >
-              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#E5E5E0]" style={FONT_DISPLAY}>
-                {card.title}
-              </p>
-              <p className="mt-2 text-[0.82rem] leading-[1.6] text-[#E5E5E0]/65" style={FONT_BODY}>
-                {card.description}
-              </p>
-              <ul className="mt-4 space-y-2">
-                {card.bullets.map((bullet) => (
-                  <li key={bullet} className="text-[0.78rem] leading-[1.55] text-[#E5E5E0]/50" style={FONT_BODY}>
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-[#0B0B0A]/85 via-[#0B0B0A]/40 to-transparent p-5 md:p-6">
+          <p
+            className="text-[clamp(1.35rem,2.8vw,2.25rem)] font-bold uppercase leading-[0.95] tracking-[-0.02em] text-[#E5E5E0]"
+            style={FONT_DISPLAY}
+          >
+            {card.title}
+          </p>
+        </div>
       </div>
     </motion.div>
   )
 }
 
+const APPROACH_HEADING_LINES = ['Project', 'Approach'] as const
+const APPROACH_HEADING_CHAR_COUNT = APPROACH_HEADING_LINES.reduce((sum, line) => sum + line.length, 0)
+
+/** Extra viewport height reserved for heading scroll before cards advance. */
+const APPROACH_HEADING_SCROLL_VH = 0.32
+
+/** Share of normalized section progress for heading reveal before carousel moves. */
+const APPROACH_HEADING_SCROLL_PORTION = 0.24
+
+const mapProcessScrollToCarouselProgress = (progress: number) => {
+  if (progress <= APPROACH_HEADING_SCROLL_PORTION) return 0
+  return clamp((progress - APPROACH_HEADING_SCROLL_PORTION) / (1 - APPROACH_HEADING_SCROLL_PORTION))
+}
+
+const clampProgress = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value))
+
+const ApproachSlotLetter = ({
+  char,
+  charIndex,
+  scrollProgress,
+}: {
+  char: string
+  charIndex: number
+  scrollProgress: MotionValue<number>
+}) => {
+  const revealStart =
+    (charIndex / APPROACH_HEADING_CHAR_COUNT) * APPROACH_HEADING_SCROLL_PORTION * 0.78
+  const revealEnd = revealStart + APPROACH_HEADING_SCROLL_PORTION * 0.16
+  const y = useTransform(scrollProgress, (p) => {
+    if (p <= revealStart) return '120%'
+    if (p >= revealEnd) return '0%'
+    const t = (p - revealStart) / (revealEnd - revealStart)
+    const eased = 1 - (1 - t) ** 3
+    return `${120 - eased * 120}%`
+  })
+  const opacity = useTransform(scrollProgress, (p) => {
+    if (p <= revealStart) return 0
+    if (p >= revealStart + 0.025) return 1
+    return clampProgress((p - revealStart) / 0.025)
+  })
+
+  return (
+    <span
+      className="inline-block overflow-hidden align-top"
+      style={{ height: '1.05em', width: char === ' ' ? '0.28em' : undefined }}
+    >
+      <motion.span className="block will-change-transform" style={{ y, opacity }}>
+        {char}
+      </motion.span>
+    </span>
+  )
+}
+
+const ApproachHeadingRow = ({
+  line,
+  lineIndex,
+  charOffset,
+  scrollProgress,
+}: {
+  line: string
+  lineIndex: number
+  charOffset: number
+  scrollProgress: MotionValue<number>
+}) => (
+  <span className="block whitespace-nowrap uppercase">
+    {line.split('').map((char, i) => (
+      <ApproachSlotLetter
+        key={`${lineIndex}-${i}`}
+        char={char}
+        charIndex={charOffset + i}
+        scrollProgress={scrollProgress}
+      />
+    ))}
+  </span>
+)
+
+const ProcessApproachHeading = ({ scrollProgress }: { scrollProgress: MotionValue<number> }) => (
+  <div className="pointer-events-none absolute right-3 top-[6vh] z-[110] sm:right-4 md:right-5 lg:right-6">
+    <p
+      aria-label="Project Approach"
+      className="text-right text-[clamp(2.25rem,7vw,4.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-[#0B0B0A]"
+      style={FONT_DISPLAY}
+    >
+      {APPROACH_HEADING_LINES.map((line, i) => (
+        <ApproachHeadingRow
+          key={line}
+          line={line}
+          lineIndex={i}
+          charOffset={APPROACH_HEADING_LINES.slice(0, i).reduce((sum, entry) => sum + entry.length, 0)}
+          scrollProgress={scrollProgress}
+        />
+      ))}
+    </p>
+  </div>
+)
+
 const ProcessSection = () => {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const scrollProgress = useProcessGalleryProgress(sectionRef)
+  const carouselScrollProgress = useTransform(scrollProgress, mapProcessScrollToCarouselProgress)
   const sectionExtra = useProcessSectionHeight(processCards.length)
+  const [headingScrollExtra, setHeadingScrollExtra] = useState(0)
   const { layout, layoutRef } = useCarouselStageLayout(stageRef)
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   useEffect(() => {
-    return scrollProgress.on('change', (p) => {
-      setExpandedIndex((current) => {
-        if (current === null) return current
-        const activeStep = p * (PROCESS_CARD_COUNT - 1)
-        return Math.abs(current - activeStep) > 0.7 ? null : current
-      })
-    })
-  }, [scrollProgress])
+    const update = () => setHeadingScrollExtra(window.innerHeight * APPROACH_HEADING_SCROLL_VH)
+    update()
+    window.addEventListener('resize', update, { passive: true })
+    return () => window.removeEventListener('resize', update)
+  }, [])
 
   return (
     <section
       ref={sectionRef}
       className="relative bg-white text-[#0B0B0A]"
       id="process"
-      style={{ minHeight: `calc(100vh + ${sectionExtra}px)` }}
+      style={{ minHeight: `calc(100vh + ${headingScrollExtra + sectionExtra}px)` }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <ProcessApproachHeading scrollProgress={scrollProgress} />
+
         <div ref={stageRef} className="relative h-full w-full">
           {processCards.map((card, i) => (
             <ProcessCarouselCard
               key={card.number}
               card={card}
               index={i}
-              scrollProgress={scrollProgress}
+              scrollProgress={carouselScrollProgress}
               layoutRef={layoutRef}
               layout={layout}
-              isExpanded={expandedIndex === i}
-              onToggle={() => setExpandedIndex(expandedIndex === i ? null : i)}
             />
           ))}
         </div>
@@ -505,7 +530,7 @@ const faqs = [
   { q: "What's your strongest technical area?", a: "Building end-to-end systems that ship — model training to FastAPI backend to React frontend. Most fluent in Python (ML/backend) and TypeScript (frontend)." },
   { q: "What's your stack?", a: "Python + PyTorch/TensorFlow for ML. React + TypeScript + Tailwind for frontend. FastAPI + Node.js for backend. PostgreSQL + Firebase + Convex for data. Docker + Vercel + Render for deployment." },
   { q: 'Are you available for full-time roles?', a: "Yes — recent SFU Computer Science grad, actively looking. Open to relocating or remote." },
-  { q: 'How do I reach you?', a: "LinkedIn is fastest. GitHub has all the code. Links are in the section below." },
+  { q: 'How do I reach you?', a: "LinkedIn is fastest. GitHub has all the code. Both are linked in the footer." },
 ]
 
 const FaqContactCard = () => (
@@ -562,7 +587,7 @@ const FaqSection = () => {
           >
             <div>
               <p
-                className="text-[clamp(2rem,4vw,3.5rem)] font-bold uppercase leading-[0.94] tracking-[-0.01em] text-[#E5E5E0]"
+                className="text-[clamp(3.25rem,8vw,6rem)] font-bold uppercase leading-[0.9] tracking-[-0.03em] text-[#E5E5E0]"
                 style={FONT_DISPLAY}
               >
                 FAQs
@@ -616,7 +641,7 @@ const FaqSection = () => {
                             : hoveredFaq === i
                               ? 'scale(1.08)'
                               : 'scale(1)',
-                        color: isHighlighted ? '#ec4002' : 'rgba(236, 64, 2, 0.4)',
+                        color: isHighlighted ? '#E5E5E0' : 'rgba(229, 229, 224, 0.28)',
                       }}
                       aria-hidden
                     >
@@ -655,20 +680,6 @@ const footerNavLinks = [
   { label: 'Contact', href: 'mailto:marcosuteja@gmail.com', external: false },
 ] as const
 
-const footerFocusLinks = [
-  { label: 'Machine Learning Systems', href: '#projects' },
-  { label: 'Full-Stack Web Apps', href: '#projects' },
-  { label: 'Real-Time Applications', href: '#projects' },
-  { label: 'Computer Vision Tools', href: '#projects' },
-] as const
-
-const footerMoreLinks = [
-  { label: 'Data Pipelines', href: '#projects' },
-  { label: 'Research Prototypes', href: '#projects' },
-  { label: 'Open to Relocation', href: 'mailto:marcosuteja@gmail.com' },
-  { label: 'Remote Worldwide', href: 'mailto:marcosuteja@gmail.com' },
-] as const
-
 const socialLinks = [
   {
     label: 'LinkedIn',
@@ -689,19 +700,6 @@ const socialLinks = [
     Icon: Instagram,
   },
 ] as const
-
-const ExternalIcon = () => (
-  <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4 shrink-0 md:h-5 md:w-5" aria-hidden>
-    <rect x="2.5" y="2.5" width="8.5" height="8.5" stroke="currentColor" strokeWidth="1.2" />
-    <path
-      d="M6.5 2.5H13.5V9.5M13.5 2.5L5.5 10.5"
-      stroke="currentColor"
-      strokeWidth="1.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
 
 const FooterNavRow = ({
   label,
@@ -726,13 +724,15 @@ const FooterNavRow = ({
       className="border-b border-solid"
       style={{ borderColor: FOOTER_LINE }}
     >
-      <a
+      <motion.a
         href={href}
         target={external ? '_blank' : undefined}
         rel={external ? 'noreferrer' : undefined}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="group flex items-center justify-between gap-4 py-2.5 transition-colors duration-300 md:py-3"
+        animate={{ x: hovered ? 16 : 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="group flex items-center justify-between gap-4 py-2.5 md:py-3"
       >
         <span
           className="text-[clamp(1.35rem,3.5vw,2.5rem)] font-bold uppercase leading-[0.94] tracking-[-0.02em] transition-colors duration-300"
@@ -744,11 +744,13 @@ const FooterNavRow = ({
           {label}
         </span>
         {external ? (
-          <span className="text-[#E5E5E0]/45 transition-colors duration-300 group-hover:text-[#E5E5E0]/75">
-            <ExternalIcon />
-          </span>
+          <ExternalLink
+            className="h-4 w-4 shrink-0 text-[#E5E5E0]/45 transition-colors duration-300 group-hover:text-[#E5E5E0]/75 md:h-5 md:w-5"
+            strokeWidth={1.5}
+            aria-hidden
+          />
         ) : null}
-      </a>
+      </motion.a>
     </motion.div>
   )
 }
@@ -761,104 +763,48 @@ const CtaSection = () => {
     <section ref={ref} id="contact" className="bg-[#0B0B0A] py-[6vh] text-[#E5E5E0] md:py-[8vh]">
       <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-start"
-          >
-            <img
-              src="/logo.png"
-              alt="Marco Suteja"
-              className="h-20 w-auto object-contain object-left sm:h-24 md:h-28 lg:h-32"
-            />
-          </motion.div>
-
           <nav aria-label="Footer navigation">
             {footerNavLinks.map((link, i) => (
               <FooterNavRow key={link.label} {...link} index={i} isInView={isInView} />
             ))}
           </nav>
-        </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="mt-8 grid grid-cols-1 gap-6 border-t border-solid pt-6 md:mt-10 md:grid-cols-[1.2fr_1fr_1fr] md:gap-8 md:pt-7"
-          style={{ borderColor: FOOTER_LINE }}
-        >
-          <div>
-            <p className="max-w-[34ch] text-[0.75rem] leading-[1.6] text-[#E5E5E0]/55" style={FONT_BODY}>
-              Full-stack software developer and Simon Fraser University CS graduate building at the
-              intersection of machine learning, real-time systems, and product engineering.
-            </p>
-            <ul className="mt-4 space-y-2">
-              {socialLinks.map(({ label, href, handle, Icon }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex items-center gap-2.5 text-[#E5E5E0]/70 transition-colors duration-300 hover:text-[#E5E5E0]"
-                  >
-                    <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
-                    <span className="text-[0.75rem] leading-none" style={FONT_BODY}>
-                      {handle}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <ul className="space-y-1.5">
-              {footerFocusLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-[0.75rem] leading-snug text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0]/85"
-                    style={FONT_BODY}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-col justify-between gap-4 md:text-right">
-            <ul className="space-y-1.5 md:ml-auto md:w-fit">
-              {footerMoreLinks.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-[0.75rem] leading-snug text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0]/85"
-                    style={FONT_BODY}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <div className="md:ml-auto md:w-fit">
-              <p className="text-[0.7rem] leading-relaxed text-[#E5E5E0]/40" style={FONT_BODY}>
-                Burnaby, BC · Open to remote
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col justify-between gap-8"
+          >
+            <img
+              src="/logo.png"
+              alt="Marco Suteja"
+              className="h-20 w-auto object-contain object-left sm:h-24 md:h-28 lg:h-32 md:object-right md:ml-auto"
+            />
+            <div className="md:ml-auto md:text-right">
+              <p className="max-w-[34ch] text-[0.75rem] leading-[1.6] text-[#E5E5E0]/55 md:ml-auto" style={FONT_BODY}>
+                Full-stack software developer and Simon Fraser University CS graduate building at the
+                intersection of machine learning, real-time systems, and product engineering.
               </p>
-              <a
-                href="mailto:marcosuteja@gmail.com"
-                className="mt-1 block text-[0.75rem] text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0]"
-                style={FONT_BODY}
-              >
-                marcosuteja@gmail.com
-              </a>
-              <p className="mt-3 text-[0.58rem] uppercase tracking-[0.14em] text-[#E5E5E0]/30" style={FONT_DISPLAY}>
-                © {new Date().getFullYear()} Mario Areliano Suteja
-              </p>
+              <ul className="mt-4 space-y-2 md:ml-auto md:w-fit">
+                {socialLinks.map(({ label, href, handle, Icon }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-center gap-2.5 text-[#E5E5E0]/70 transition-colors duration-300 hover:text-[#E5E5E0] md:flex-row-reverse"
+                    >
+                      <Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.5} aria-hidden />
+                      <span className="text-[0.75rem] leading-none" style={FONT_BODY}>
+                        {handle}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   )

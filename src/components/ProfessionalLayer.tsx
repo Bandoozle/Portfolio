@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import HeroScrollIntro from './HeroScrollIntro'
+import IntroHero from './IntroHero'
 import PortfolioMiddle from './PortfolioMiddle'
 
 const ProfessionalLayer = () => {
@@ -7,7 +7,7 @@ const ProfessionalLayer = () => {
 
   return (
     <main ref={scrollRef} className="h-screen overflow-y-auto bg-[#0B0B0A] text-primary">
-      <HeroScrollIntro scrollRef={scrollRef} />
+      <IntroHero />
       <PortfolioMiddle />
     </main>
   )
