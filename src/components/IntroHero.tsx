@@ -21,8 +21,13 @@ const HERO_NAV_LINKS = [
   { label: 'FAQS', href: '#faq' },
 ] as const
 
+const RESUME_HREF = '/resume.pdf'
+
 const heroMetaTextClass =
-  'text-[clamp(0.82rem,min(1.12vw,1.75svh),1rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] transition-opacity duration-200 hover:opacity-55'
+  'text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A]'
+
+const heroStaticMetaTextClass =
+  'text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-semibold uppercase leading-[1.15] tracking-[0.1em] text-[#0B0B0A]'
 
 const HERO_PORTRAIT = '/hero_marco.png'
 
@@ -52,6 +57,24 @@ const HERO_NAME_CHARS = HERO_NAME_LETTERS.map((char, index) => ({
   char,
   key: `${index}-${char}`,
   loadOrder: HERO_NAME_LETTERS.slice(0, index).filter((letter) => letter !== ' ').length,
+}))
+
+const SUBTITLE_TEXT = 'Full-Stack Developer'
+
+const SUBTITLE_GRADIENTS = [
+  'linear-gradient(90deg, #ff004c, #ff7a00)',
+  'linear-gradient(90deg, #ff7a00, #ffd400)',
+  'linear-gradient(90deg, #ffd400, #7cff00)',
+  'linear-gradient(90deg, #7cff00, #00ffd5)',
+  'linear-gradient(90deg, #00ffd5, #008cff)',
+  'linear-gradient(90deg, #008cff, #7a00ff)',
+  'linear-gradient(90deg, #7a00ff, #ff00d4)',
+] as const
+
+const SUBTITLE_CHARS = SUBTITLE_TEXT.split('').map((char, index) => ({
+  char,
+  key: `${index}-${char}`,
+  gradient: SUBTITLE_GRADIENTS[index % SUBTITLE_GRADIENTS.length],
 }))
 
 type IntroPhase = 'intro' | 'exit' | 'done'
@@ -95,6 +118,34 @@ const IntroOverlay = ({ phase, skipMotion }: { phase: IntroPhase; skipMotion: bo
   )
 }
 
+const HoverFillLink = ({
+  href,
+  children,
+  className = '',
+  target,
+  rel,
+  ariaLabel,
+}: {
+  href: string
+  children: string
+  className?: string
+  target?: string
+  rel?: string
+  ariaLabel?: string
+}) => (
+  <a
+    href={href}
+    target={target}
+    rel={rel}
+    aria-label={ariaLabel}
+    className={`group relative inline-flex items-center px-[0.7em] py-[0.45em] -mx-[0.7em] -my-[0.45em] outline outline-2 outline-dashed outline-transparent transition-[outline-color] duration-150 hover:outline-[#0B0B0A] ${className}`}
+    style={FONT_DISPLAY}
+  >
+    <span className="absolute inset-0 z-0 origin-left scale-x-0 bg-[#0B0B0A]/12 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+    <span className="relative z-10">{children}</span>
+  </a>
+)
+
 const HeroNav = ({
   visible,
   skipMotion,
@@ -113,36 +164,90 @@ const HeroNav = ({
       <ul className="flex flex-wrap items-center gap-x-5 sm:gap-x-7 md:gap-x-8">
         {HERO_NAV_LINKS.map((link) => (
           <li key={link.label}>
-            <a href={link.href} className={heroMetaTextClass} style={FONT_DISPLAY}>
+            <HoverFillLink href={link.href} className={heroMetaTextClass}>
               {link.label}
-            </a>
+            </HoverFillLink>
           </li>
         ))}
       </ul>
 
-      <a href="#contact" className={`${heroMetaTextClass} shrink-0`} style={FONT_DISPLAY}>
+      <HoverFillLink href="#contact" className={`${heroMetaTextClass} shrink-0`}>
         Contacts
-      </a>
+      </HoverFillLink>
     </div>
   </motion.nav>
 )
 
-const HeroLocation = ({
+const HeroBottomMeta = ({
   visible,
   skipMotion,
 }: {
   visible: boolean
   skipMotion: boolean
 }) => (
-  <motion.p
-    className="pointer-events-none absolute bottom-4 left-3 z-30 text-left text-[clamp(0.82rem,min(1.12vw,1.75svh),1rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] sm:bottom-5 sm:left-4 md:bottom-6 md:left-5 lg:left-6"
+  <>
+    <motion.div
+      className={`pointer-events-none absolute bottom-4 left-3 z-30 text-left sm:bottom-5 sm:left-4 md:bottom-6 md:left-5 lg:left-6 ${heroStaticMetaTextClass}`}
+      style={FONT_DISPLAY}
+      initial={skipMotion ? false : { opacity: 0, y: 10 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
+    >
+      <span className="block">Available for full-time roles</span>
+      <span className="mt-1 block">Vancouver / Remote</span>
+    </motion.div>
+
+    <motion.div
+      className="pointer-events-none absolute bottom-4 left-1/2 z-30 -translate-x-1/2 text-center text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-medium uppercase leading-[1.15] tracking-[0.1em] text-[#0B0B0A] sm:bottom-5 md:bottom-6"
+      style={FONT_DISPLAY}
+      initial={skipMotion ? false : { opacity: 0, y: 10 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
+    >
+      Scroll down
+    </motion.div>
+
+    <motion.div
+      className="absolute bottom-4 right-3 z-30 text-right sm:bottom-5 sm:right-4 md:bottom-6 md:right-5 lg:right-6"
+      initial={skipMotion ? false : { opacity: 0, y: 10 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
+    >
+      <HoverFillLink
+        href={RESUME_HREF}
+        target="_blank"
+        rel="noreferrer"
+        ariaLabel="Preview my resume"
+        className={heroStaticMetaTextClass}
+      >
+        My Resume
+      </HoverFillLink>
+    </motion.div>
+  </>
+)
+
+const HeroLocationLabel = ({
+  visible,
+  skipMotion,
+  children,
+  align,
+}: {
+  visible: boolean
+  skipMotion: boolean
+  children: string
+  align: 'left' | 'right'
+}) => (
+  <motion.span
+    className={`pointer-events-none block min-w-0 whitespace-nowrap text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] ${
+      align === 'right' ? 'text-right' : 'text-left'
+    }`}
     style={FONT_DISPLAY}
     initial={skipMotion ? false : { opacity: 0, y: 10 }}
     animate={visible ? { opacity: 1, y: 0 } : {}}
     transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
   >
-    Based in Burnaby, BC, Canada
-  </motion.p>
+    {children}
+  </motion.span>
 )
 
 const HoverLetter = ({
@@ -226,6 +331,42 @@ const HoverLetter = ({
   )
 }
 
+const HoverGradientSubtitleLetter = ({
+  char,
+  gradient,
+}: {
+  char: string
+  gradient: string
+}) => {
+  const [hovered, setHovered] = useState(false)
+
+  if (char === ' ') {
+    return <span className="inline-block w-[0.28em]" aria-hidden="true" />
+  }
+
+  return (
+    <span
+      className="inline-block cursor-default transition-transform duration-300 ease-out hover:-translate-y-[0.04em]"
+      style={
+        hovered
+          ? {
+              backgroundImage: gradient,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              WebkitTextFillColor: 'transparent',
+            }
+          : undefined
+      }
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      aria-hidden="true"
+    >
+      {char}
+    </span>
+  )
+}
+
 const HeroReel = ({
   visible,
   skipMotion,
@@ -286,9 +427,9 @@ const HeroLanding = ({
     aria-label="Portfolio hero"
   >
     <HeroNav visible={visible} skipMotion={skipMotion} />
-    <HeroLocation visible={textVisible} skipMotion={skipMotion} />
+    <HeroBottomMeta visible={textVisible} skipMotion={skipMotion} />
 
-    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.2rem,1.1svh,0.85rem)] pb-[clamp(3.25rem,7svh,5rem)] pt-[clamp(3.5rem,8svh,5.25rem)]">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.2rem,1.1svh,0.85rem)] pb-[clamp(1.5rem,4svh,3rem)] pt-[clamp(3.5rem,8svh,5.25rem)]">
       <h1 className="hero-mega-type flex w-full flex-wrap items-center justify-center overflow-visible text-[clamp(4rem,18.5vw,min(15rem,34svh))] leading-[0.88]">
         <span className="sr-only">Marco Suteja</span>
 
@@ -307,7 +448,7 @@ const HeroLanding = ({
 
       <div className="overflow-hidden pb-[0.14em] -mb-[0.14em]">
         <motion.p
-          className="hero-subtitle-type text-[clamp(2rem,8.5vw,min(6.5rem,15svh))] leading-[0.95] tracking-[0.02em]"
+          className="hero-subtitle-type flex flex-wrap items-center justify-center text-[clamp(2rem,8.5vw,min(6.5rem,15svh))] leading-[0.95] tracking-[0.02em]"
           initial={skipMotion ? false : { y: '120%' }}
           animate={textVisible ? { y: 0 } : { y: '120%' }}
           transition={{
@@ -315,13 +456,24 @@ const HeroLanding = ({
             delay: skipMotion ? 0 : SUBTITLE_REVEAL_DELAY,
             ease: EASE,
           }}
+          aria-label="Full-Stack Developer"
         >
-          Full-Stack Developer
+          {SUBTITLE_CHARS.map(({ char, key, gradient }) => (
+            <HoverGradientSubtitleLetter key={key} char={char} gradient={gradient} />
+          ))}
         </motion.p>
       </div>
 
-      <div className="relative flex w-full items-end justify-center">
+      <div className="grid w-full max-w-[min(92vw,64rem)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-[clamp(0.75rem,2vw,2rem)]">
+        <HeroLocationLabel visible={textVisible} skipMotion={skipMotion} align="right">
+          Based In
+        </HeroLocationLabel>
+
         <HeroReel visible={textVisible} skipMotion={skipMotion} />
+
+        <HeroLocationLabel visible={textVisible} skipMotion={skipMotion} align="left">
+          Burnaby, BC, Canada
+        </HeroLocationLabel>
       </div>
     </div>
   </section>

@@ -94,6 +94,8 @@ const getPanelFadeProfile = (projectId: number): PanelFadeProfile => {
 
 const panelFadeProfiles = new Map(portfolioProjects.map((project) => [project.id, getPanelFadeProfile(project.id)]))
 
+const MIN_PANEL_OPACITY = 0.32
+
 const imagePanelOpacity = (progress: MotionValue<number>, projectId: number) => {
   const profile = panelFadeProfiles.get(projectId) ?? getPanelFadeProfile(projectId)
 
@@ -101,7 +103,7 @@ const imagePanelOpacity = (progress: MotionValue<number>, projectId: number) => 
     const dist = Math.abs(p - profile.peak)
     const linear = Math.max(0, 1 - dist / profile.width)
     const smooth = linear * linear * (3 - 2 * linear)
-    return smooth * profile.maxOpacity
+    return MIN_PANEL_OPACITY + smooth * (profile.maxOpacity - MIN_PANEL_OPACITY)
   })
 }
 

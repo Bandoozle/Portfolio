@@ -30,6 +30,12 @@ const FONT_BODY = {
   fontStyle: 'normal' as const,
 }
 
+/** FAQ + hero-adjacent serif — Pink Average */
+const FONT_PINK_AVERAGE = {
+  fontFamily: "'Pink Average', 'Instrument Serif', Georgia, serif",
+  fontStyle: 'normal' as const,
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. PROJECTS — PODIUM-style grid / list gallery
 // ─────────────────────────────────────────────────────────────────────────────
@@ -624,17 +630,18 @@ const FaqSection = () => {
                     className="flex w-full items-center justify-between px-1 py-6 text-left md:py-8"
                   >
                     <h3
-                      className="text-[clamp(2rem,4vw,3.5rem)] font-bold leading-[0.94] tracking-[-0.01em] transition-colors duration-300"
+                      className="text-[clamp(2rem,4vw,3.5rem)] font-normal leading-[0.94] tracking-[0.01em] transition-colors duration-300"
                       style={{
-                        ...FONT_DISPLAY,
+                        ...FONT_PINK_AVERAGE,
                         color: isHighlighted ? '#E5E5E0' : 'rgba(229, 229, 224, 0.28)',
                       }}
                     >
                       {item.q}
                     </h3>
                     <span
-                      className="ml-6 shrink-0 text-[clamp(2rem,3.5vw,3rem)] font-light leading-none transition-all duration-300"
+                      className="ml-6 shrink-0 text-[clamp(2rem,3.5vw,3rem)] font-normal leading-none transition-all duration-300"
                       style={{
+                        ...FONT_PINK_AVERAGE,
                         transform:
                           open === i
                             ? 'rotate(45deg) scale(1.08)'
