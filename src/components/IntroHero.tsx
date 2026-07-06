@@ -21,8 +21,8 @@ const HERO_NAV_LINKS = [
   { label: 'FAQS', href: '#faq' },
 ] as const
 
-const navLinkClass =
-  'text-[0.8rem] font-semibold uppercase leading-none tracking-[0.08em] text-[#0B0B0A] transition-opacity duration-200 hover:opacity-55 sm:text-[0.85rem]'
+const heroMetaTextClass =
+  'text-[clamp(0.82rem,min(1.12vw,1.75svh),1rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] transition-opacity duration-200 hover:opacity-55'
 
 const HERO_PORTRAIT = '/hero_marco.png'
 
@@ -103,7 +103,7 @@ const HeroNav = ({
   skipMotion: boolean
 }) => (
   <motion.nav
-    className="absolute inset-x-0 top-0 z-20 px-3 pt-5 sm:px-4 md:px-5 md:pt-6 lg:px-6"
+    className="absolute inset-x-0 top-0 z-30 px-3 pt-4 sm:px-4 md:px-5 md:pt-5 lg:px-6"
     initial={skipMotion ? false : { opacity: 0, y: -10 }}
     animate={visible ? { opacity: 1, y: 0 } : {}}
     transition={{ duration: 0.65, delay: skipMotion ? 0 : 0.04, ease: EASE }}
@@ -113,14 +113,14 @@ const HeroNav = ({
       <ul className="flex flex-wrap items-center gap-x-5 sm:gap-x-7 md:gap-x-8">
         {HERO_NAV_LINKS.map((link) => (
           <li key={link.label}>
-            <a href={link.href} className={navLinkClass} style={FONT_DISPLAY}>
+            <a href={link.href} className={heroMetaTextClass} style={FONT_DISPLAY}>
               {link.label}
             </a>
           </li>
         ))}
       </ul>
 
-      <a href="#contact" className={`${navLinkClass} shrink-0`} style={FONT_DISPLAY}>
+      <a href="#contact" className={`${heroMetaTextClass} shrink-0`} style={FONT_DISPLAY}>
         Contacts
       </a>
     </div>
@@ -135,7 +135,7 @@ const HeroLocation = ({
   skipMotion: boolean
 }) => (
   <motion.p
-    className="absolute bottom-6 left-3 z-20 text-left text-[0.72rem] font-semibold uppercase leading-none tracking-[0.12em] text-[#0B0B0A] sm:bottom-7 sm:left-4 sm:text-[0.78rem] md:bottom-8 md:left-5 lg:left-6"
+    className="pointer-events-none absolute bottom-4 left-3 z-30 text-left text-[clamp(0.82rem,min(1.12vw,1.75svh),1rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] sm:bottom-5 sm:left-4 md:bottom-6 md:left-5 lg:left-6"
     style={FONT_DISPLAY}
     initial={skipMotion ? false : { opacity: 0, y: 10 }}
     animate={visible ? { opacity: 1, y: 0 } : {}}
@@ -186,7 +186,7 @@ const HoverLetter = ({
 
   return (
     <span
-      className="relative inline-block cursor-default overflow-hidden align-top leading-none pb-[0.14em] -mb-[0.14em]"
+      className="relative inline-block cursor-default overflow-hidden align-top leading-none pb-[0.12em] -mb-[0.12em]"
       onMouseEnter={() => {
         if (textVisible && introDone && !skipMotion) {
           setCycle((current) => current + 1)
@@ -254,8 +254,8 @@ const HeroReel = ({
 
   return (
     <motion.div
-      className="relative w-[clamp(8rem,21vw,13.5rem)] shrink-0 overflow-hidden"
-      initial={skipMotion ? false : { opacity: 0, y: 14 }}
+      className="relative w-[clamp(10rem,25vw,min(17rem,26svh))] shrink-0 overflow-hidden"
+      initial={skipMotion ? false : { opacity: 0, y: 12 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.75, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
       aria-live="polite"
@@ -281,15 +281,15 @@ const HeroLanding = ({
 }) => (
   <section
     id="hero"
-    className="relative flex h-[100dvh] min-h-[100dvh] overflow-hidden px-3 text-center sm:px-4 md:px-5 lg:px-6"
+    className="relative flex h-[100svh] min-h-[100svh] overflow-hidden px-3 text-center sm:px-4 md:px-5 lg:px-6"
     style={{ backgroundColor: HERO_BG, color: HERO_TEXT }}
     aria-label="Portfolio hero"
   >
     <HeroNav visible={visible} skipMotion={skipMotion} />
     <HeroLocation visible={textVisible} skipMotion={skipMotion} />
 
-    <div className="flex min-h-0 flex-1 flex-col items-center justify-center pb-[clamp(1.5rem,4vh,3rem)] pt-[clamp(4rem,8vh,5.5rem)]">
-      <h1 className="hero-mega-type mb-[clamp(0.7rem,2.2vh,1.4rem)] flex w-full flex-wrap items-center justify-center overflow-visible text-[clamp(4rem,18.5vw,15rem)] leading-[0.88]">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.2rem,1.1svh,0.85rem)] pb-[clamp(3.25rem,7svh,5rem)] pt-[clamp(3.5rem,8svh,5.25rem)]">
+      <h1 className="hero-mega-type flex w-full flex-wrap items-center justify-center overflow-visible text-[clamp(4rem,18.5vw,min(15rem,34svh))] leading-[0.88]">
         <span className="sr-only">Marco Suteja</span>
 
         <span className="inline-flex flex-wrap items-center justify-center overflow-visible" aria-hidden>
@@ -305,9 +305,9 @@ const HeroLanding = ({
         </span>
       </h1>
 
-      <div className="overflow-hidden pb-[0.16em] -mb-[0.16em]">
+      <div className="overflow-hidden pb-[0.14em] -mb-[0.14em]">
         <motion.p
-          className="hero-subtitle-type text-[clamp(2rem,8.5vw,6.5rem)] leading-[0.95] tracking-[0.02em]"
+          className="hero-subtitle-type text-[clamp(2rem,8.5vw,min(6.5rem,15svh))] leading-[0.95] tracking-[0.02em]"
           initial={skipMotion ? false : { y: '120%' }}
           animate={textVisible ? { y: 0 } : { y: '120%' }}
           transition={{
@@ -320,7 +320,7 @@ const HeroLanding = ({
         </motion.p>
       </div>
 
-      <div className="relative mt-[clamp(0.35rem,1.2vh,0.9rem)] flex w-full items-end justify-center">
+      <div className="relative flex w-full items-end justify-center">
         <HeroReel visible={textVisible} skipMotion={skipMotion} />
       </div>
     </div>
