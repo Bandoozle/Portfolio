@@ -10,7 +10,7 @@
  */
 
 import { motion, useInView, useMotionValue, useTransform, type MotionValue } from 'framer-motion'
-import { Github, Linkedin, type LucideIcon } from 'lucide-react'
+import { Github, Linkedin, Plus, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import diagnoseImage from '../images/diagnose.jpg'
 import footerMarcoImage from '../images/footer_marco.jpg'
@@ -406,7 +406,7 @@ const useCarouselStageLayout = (stageRef: RefObject<HTMLDivElement | null>) => {
 
       const next = {
         activeX: isMobile ? 0 : -stageW * 0.08,
-        activeY: isMobile ? stageH * 0.07 : stageH * 0.05,
+        activeY: isMobile ? stageH * 0.13 : stageH * 0.05,
         cardWidth,
         cardHeight,
         gapX: isMobile ? cardWidth * 1.02 : cardWidth * 1.18,
@@ -484,9 +484,9 @@ const ProcessCarouselCard = ({
             ? `${card.title}: hide details`
             : `${card.title}: reveal approach details`
         }
-        className="group relative h-full w-full cursor-pointer overflow-hidden text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B0B0A]"
+        className="group relative h-full w-full cursor-pointer overflow-hidden text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B0B0A] max-md:ring-2 max-md:ring-[#E5E5E0]/35 max-md:ring-offset-2 max-md:ring-offset-[#E5E5E0]"
       >
-        <div className="relative h-full w-full overflow-hidden shadow-[0_12px_40px_rgba(11,11,10,0.12)] transition-[box-shadow,transform] duration-300 group-hover:shadow-[0_28px_70px_rgba(11,11,10,0.24)] group-focus-visible:shadow-[0_28px_70px_rgba(11,11,10,0.24)]">
+        <div className="relative h-full w-full overflow-hidden shadow-[0_12px_40px_rgba(11,11,10,0.12)] transition-[box-shadow,transform] duration-300 group-hover:shadow-[0_28px_70px_rgba(11,11,10,0.24)] group-focus-visible:shadow-[0_28px_70px_rgba(11,11,10,0.24)] max-md:shadow-[0_18px_52px_rgba(11,11,10,0.22)]">
           <div
             className="relative h-full w-full overflow-hidden"
             style={
@@ -510,8 +510,23 @@ const ProcessCarouselCard = ({
               animate={{ opacity: flipped ? 0 : 1 }}
               transition={{ duration: 0.25, ease: PROCESS_FLIP_EASE }}
             >
-              <span className="border border-[#E5E5E0]/70 bg-[#0B0B0A]/55 px-4 py-2 text-[0.62rem] font-semibold tracking-[0.1em] text-[#E5E5E0] opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                CLICK TO REVEAL
+              <span className="border border-[#E5E5E0]/70 bg-[#0B0B0A]/55 px-4 py-2 text-[0.62rem] font-semibold tracking-[0.1em] text-[#E5E5E0] opacity-100 backdrop-blur-sm transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
+                <span className="md:hidden">TAP TO REVEAL</span>
+                <span className="hidden md:inline">CLICK TO REVEAL</span>
+              </span>
+            </motion.div>
+
+            <motion.div
+              className="pointer-events-none absolute right-3 top-3 z-[3] md:hidden"
+              initial={false}
+              animate={{ opacity: flipped ? 0 : 1 }}
+              transition={{ duration: 0.25, ease: PROCESS_FLIP_EASE }}
+            >
+              <span
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E5E0]/80 bg-[#0B0B0A]/65 backdrop-blur-sm"
+                aria-hidden
+              >
+                <Plus className="h-4 w-4 text-[#E5E5E0]" strokeWidth={2.5} />
               </span>
             </motion.div>
 
@@ -692,7 +707,7 @@ const ApproachHeadingRow = ({
 }
 
 const ProcessApproachHeading = ({ scrollProgress }: { scrollProgress: MotionValue<number> }) => (
-  <div className="pointer-events-none absolute inset-x-3 top-4 z-[110] text-center sm:inset-x-auto sm:right-4 sm:top-[5vh] sm:text-right md:right-5 md:top-[6vh] lg:right-6">
+  <div className="pointer-events-none absolute inset-x-3 top-[13vh] z-[110] text-center sm:inset-x-auto sm:right-4 sm:top-[5vh] sm:text-right md:right-5 md:top-[6vh] lg:right-6">
     <p
       aria-label="Project Approach"
       className="text-center text-[clamp(1.75rem,8.5vw,2.75rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-[#0B0B0A] sm:text-right sm:text-[clamp(2.25rem,7vw,4.5rem)]"
@@ -1042,7 +1057,7 @@ const CtaSection = () => {
               <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <a
                   href="?layer=retro-embed"
-                  className="text-[clamp(0.95rem,2.1vw,1.25rem)] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0]"
+                  className="hidden text-[clamp(0.95rem,2.1vw,1.25rem)] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0] md:inline"
                   style={FONT_DISPLAY}
                 >
                   get to know marco more

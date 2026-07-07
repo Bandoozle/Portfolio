@@ -639,13 +639,10 @@ const ProjectsGallerySection = () => {
           onToggle={() => {
             setViewMode((v) => {
               const next = v === 'grid' ? 'list' : 'grid'
-              if (next === 'grid') setListHover(null)
-              if (next === 'list') {
-                setListHover(null)
-                requestAnimationFrame(() => {
-                  sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                })
-              }
+              setListHover(null)
+              requestAnimationFrame(() => {
+                sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              })
               return next
             })
           }}

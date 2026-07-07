@@ -119,7 +119,7 @@ const IntroPhoto = () => (
     <motion.img
       src={HERO_PORTRAIT}
       alt="Marco Suteja"
-      className="h-[100dvh] w-auto max-w-[100vw] object-contain object-bottom grayscale"
+      className="h-[100dvh] w-auto max-w-[100vw] origin-bottom object-contain object-bottom grayscale max-md:scale-[1.5] md:scale-100"
       initial={{ y: '108%' }}
       animate={{ y: 0 }}
       transition={{ duration: 0.85, ease: EASE }}

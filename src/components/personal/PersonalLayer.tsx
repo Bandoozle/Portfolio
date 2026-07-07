@@ -23,6 +23,17 @@ const PersonalLayer = ({ onBackToProfessional }: PersonalLayerProps) => {
 
   const timeStr = clock.toLocaleTimeString('en-GB', { hour12: false })
 
+  const handleBack = () => {
+    if (onBackToProfessional) {
+      onBackToProfessional()
+      return
+    }
+
+    const url = new URL(window.location.href)
+    url.searchParams.delete('layer')
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`)
+  }
+
   return (
     <section
       className="personal-os-root personal-os-shell relative z-0 flex h-full min-h-0 w-full flex-col overflow-hidden"
@@ -30,16 +41,14 @@ const PersonalLayer = ({ onBackToProfessional }: PersonalLayerProps) => {
     >
       <header className="personal-os-chrome relative z-10 flex shrink-0 items-center justify-between gap-3 pl-5 pr-5 pt-4 pb-3 sm:gap-4 sm:pl-7 sm:pr-7 sm:pt-5 sm:pb-3.5">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-          {onBackToProfessional ? (
-            <button
-              type="button"
-              onClick={onBackToProfessional}
-              className="personal-os-back-btn shrink-0"
-              aria-label="Back to professional portfolio"
-            >
-              <ArrowLeft className="personal-os-back-btn__icon" strokeWidth={2} aria-hidden />
-            </button>
-          ) : null}
+          <button
+            type="button"
+            onClick={handleBack}
+            className="personal-os-back-btn shrink-0"
+            aria-label="Back to professional portfolio"
+          >
+            <ArrowLeft className="personal-os-back-btn__icon" strokeWidth={2} aria-hidden />
+          </button>
           <div className="truncate text-[22px] uppercase tracking-[0.14em] text-[#ffb000]">@ PERSONAL.OS</div>
         </div>
         <time className="text-[22px] tabular-nums text-[#ffb000]" dateTime={clock.toISOString()}>
