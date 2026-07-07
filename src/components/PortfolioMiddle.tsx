@@ -954,7 +954,7 @@ const footerNavLinks = [
     external: true,
     Icon: Github,
   },
-  { label: 'Contact', href: 'mailto:marcosuteja@gmail.com', external: false },
+  { label: 'Contact', href: 'mailto:smarcoareliano@gmail.com', external: false },
 ] as const
 
 const FooterNavRow = ({
