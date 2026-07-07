@@ -6,7 +6,7 @@ const ProfessionalLayer = () => {
   const scrollRef = useRef<HTMLElement>(null)
 
   return (
-    <main ref={scrollRef} className="h-screen overflow-y-auto bg-[#0B0B0A] text-primary">
+    <main ref={scrollRef} className="h-[100dvh] overflow-x-clip overflow-y-auto overscroll-y-contain bg-[#0B0B0A] text-primary [-webkit-overflow-scrolling:touch]">
       <IntroHero />
       <PortfolioMiddle />
     </main>

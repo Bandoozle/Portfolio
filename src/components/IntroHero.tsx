@@ -15,6 +15,11 @@ const FONT_DISPLAY = {
   fontStyle: 'normal' as const,
 }
 
+const FONT_PINK_AVERAGE = {
+  fontFamily: "'Pink Average', 'Instrument Serif', Georgia, serif",
+  fontStyle: 'normal' as const,
+}
+
 const HERO_NAV_LINKS = [
   { label: 'Projects', href: '#projects' },
   { label: 'Approach', href: '#process' },
@@ -51,13 +56,23 @@ const NAME_LOAD_STAGGER = 0.045
 const SUBTITLE_REVEAL_DELAY = 1.05
 const REEL_REVEAL_DELAY = 1.9
 
-const HERO_NAME_LETTERS = 'Marco Suteja'.split('')
+const HERO_NAME_LINES = ['Marco', 'Suteja'] as const
 
-const HERO_NAME_CHARS = HERO_NAME_LETTERS.map((char, index) => ({
-  char,
-  key: `${index}-${char}`,
-  loadOrder: HERO_NAME_LETTERS.slice(0, index).filter((letter) => letter !== ' ').length,
-}))
+const buildNameChars = (text: string, loadOrderStart: number) =>
+  text.split('').map((char, index) => ({
+    char,
+    key: `${loadOrderStart}-${index}-${char}`,
+    loadOrder: loadOrderStart + index,
+  }))
+
+const HERO_NAME_LINE_CHARS = HERO_NAME_LINES.map((line, lineIndex) =>
+  buildNameChars(
+    line,
+    HERO_NAME_LINES.slice(0, lineIndex).reduce((sum, entry) => sum + entry.length, 0),
+  ),
+)
+
+const HERO_NAME_DESKTOP_CHARS = buildNameChars('Marco Suteja', 0)
 
 const SUBTITLE_TEXT = 'Full-Stack Developer'
 
@@ -81,11 +96,26 @@ type IntroPhase = 'intro' | 'exit' | 'done'
 
 const IntroPhoto = () => (
   <motion.div
-    className="flex w-full items-end justify-center overflow-hidden"
+    className="relative flex w-full items-end justify-center overflow-hidden"
     initial={{ opacity: 0, scale: 0.98 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.8, ease: EASE }}
   >
+    <div
+      className="pointer-events-none absolute right-[calc(50%+clamp(8rem,13vw,16rem))] top-[44%] z-30 -translate-y-1/2 text-right"
+      aria-hidden
+    >
+      <motion.p
+        className="text-[clamp(3.5rem,10vw,12rem)] leading-none tracking-[-0.04em] text-[#E5E5E0]"
+        style={FONT_PINK_AVERAGE}
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.75, delay: 0.18, ease: EASE }}
+      >
+        Hi!
+      </motion.p>
+    </div>
+
     <motion.img
       src={HERO_PORTRAIT}
       alt="Marco Suteja"
@@ -94,6 +124,21 @@ const IntroPhoto = () => (
       animate={{ y: 0 }}
       transition={{ duration: 0.85, ease: EASE }}
     />
+
+    <div
+      className="pointer-events-none absolute left-[calc(50%+clamp(8rem,13vw,16rem))] top-[44%] z-30 -translate-y-1/2 text-left"
+      aria-hidden
+    >
+      <motion.p
+        className="text-[clamp(3.5rem,10vw,12rem)] leading-none tracking-[-0.04em] text-[#E5E5E0]"
+        style={FONT_PINK_AVERAGE}
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.75, delay: 0.7, ease: EASE }}
+      >
+        I&apos;m
+      </motion.p>
+    </div>
   </motion.div>
 )
 
@@ -178,6 +223,33 @@ const HeroNav = ({
   </motion.nav>
 )
 
+const HERO_CURSOR_LABEL_OFFSET = 18
+
+const HeroCursorScrollLabel = ({
+  cursor,
+  visible,
+}: {
+  cursor: { x: number; y: number } | null
+  visible: boolean
+}) => {
+  if (!visible || !cursor) return null
+
+  return (
+    <span
+      className="pointer-events-none fixed z-40 hidden whitespace-nowrap text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-medium uppercase leading-none tracking-[0.1em] text-[#0B0B0A] [@media(hover:hover)_and_(pointer:fine)]:block"
+      style={{
+        left: cursor.x + HERO_CURSOR_LABEL_OFFSET,
+        top: cursor.y,
+        transform: 'translateY(-50%)',
+        ...FONT_DISPLAY,
+      }}
+      aria-hidden
+    >
+      scroll down
+    </span>
+  )
+}
+
 const HeroBottomMeta = ({
   visible,
   skipMotion,
@@ -187,7 +259,7 @@ const HeroBottomMeta = ({
 }) => (
   <>
     <motion.div
-      className={`pointer-events-none absolute bottom-4 left-3 z-30 text-left sm:bottom-5 sm:left-4 md:bottom-6 md:left-5 lg:left-6 ${heroStaticMetaTextClass}`}
+      className={`pointer-events-none absolute bottom-4 left-3 z-30 max-w-[46%] text-left sm:bottom-5 sm:left-4 sm:max-w-none md:bottom-6 md:left-5 lg:left-6 ${heroStaticMetaTextClass}`}
       style={FONT_DISPLAY}
       initial={skipMotion ? false : { opacity: 0, y: 10 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
@@ -198,17 +270,7 @@ const HeroBottomMeta = ({
     </motion.div>
 
     <motion.div
-      className="pointer-events-none absolute bottom-4 left-1/2 z-30 -translate-x-1/2 text-center text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-medium uppercase leading-[1.15] tracking-[0.1em] text-[#0B0B0A] sm:bottom-5 md:bottom-6"
-      style={FONT_DISPLAY}
-      initial={skipMotion ? false : { opacity: 0, y: 10 }}
-      animate={visible ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
-    >
-      Scroll down
-    </motion.div>
-
-    <motion.div
-      className="absolute bottom-4 right-3 z-30 text-right sm:bottom-5 sm:right-4 md:bottom-6 md:right-5 lg:right-6"
+      className="absolute bottom-4 right-3 z-30 shrink-0 text-right sm:bottom-5 sm:right-4 md:bottom-6 md:right-5 lg:right-6"
       initial={skipMotion ? false : { opacity: 0, y: 10 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
@@ -226,6 +288,28 @@ const HeroBottomMeta = ({
   </>
 )
 
+const HeroLocationPlace = ({
+  visible,
+  skipMotion,
+}: {
+  visible: boolean
+  skipMotion: boolean
+}) => (
+  <motion.span
+    className="pointer-events-none block min-w-0 text-left text-[clamp(0.5rem,2.35vw,1.05rem)] font-semibold uppercase leading-[1.15] tracking-[0.05em] text-[#0B0B0A] sm:whitespace-nowrap sm:leading-none sm:tracking-[0.1em]"
+    style={FONT_DISPLAY}
+    initial={skipMotion ? false : { opacity: 0, y: 10 }}
+    animate={visible ? { opacity: 1, y: 0 } : {}}
+    transition={{ duration: 0.65, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
+  >
+    <span className="sm:hidden">
+      <span className="block whitespace-nowrap">Burnaby, BC</span>
+      <span className="block whitespace-nowrap">Canada</span>
+    </span>
+    <span className="hidden sm:inline">Burnaby, BC, Canada</span>
+  </motion.span>
+)
+
 const HeroLocationLabel = ({
   visible,
   skipMotion,
@@ -238,7 +322,7 @@ const HeroLocationLabel = ({
   align: 'left' | 'right'
 }) => (
   <motion.span
-    className={`pointer-events-none block min-w-0 whitespace-nowrap text-[clamp(0.72rem,min(1.2vw,1.85svh),1.05rem)] font-semibold uppercase leading-none tracking-[0.1em] text-[#0B0B0A] ${
+    className={`pointer-events-none block min-w-0 whitespace-nowrap text-[clamp(0.5rem,2.35vw,1.05rem)] font-semibold uppercase leading-none tracking-[0.05em] text-[#0B0B0A] sm:tracking-[0.1em] ${
       align === 'right' ? 'text-right' : 'text-left'
     }`}
     style={FONT_DISPLAY}
@@ -346,7 +430,7 @@ const HoverGradientSubtitleLetter = ({
 
   return (
     <span
-      className="inline-block cursor-default transition-transform duration-300 ease-out hover:-translate-y-[0.04em]"
+      className="inline-block cursor-default transition-transform duration-300 ease-out hover:-translate-y-[0.035em]"
       style={
         hovered
           ? {
@@ -395,7 +479,7 @@ const HeroReel = ({
 
   return (
     <motion.div
-      className="relative w-[clamp(10rem,25vw,min(17rem,26svh))] shrink-0 overflow-hidden"
+      className="relative w-[clamp(8.5rem,22vw,min(14rem,22svh))] shrink-0 overflow-hidden sm:w-[clamp(10rem,25vw,min(17rem,26svh))]"
       initial={skipMotion ? false : { opacity: 0, y: 12 }}
       animate={visible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.75, delay: skipMotion ? 0 : REEL_REVEAL_DELAY, ease: EASE }}
@@ -419,22 +503,70 @@ const HeroLanding = ({
   visible: boolean
   textVisible: boolean
   skipMotion: boolean
-}) => (
+}) => {
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null)
+  const [cursorInHero, setCursorInHero] = useState(false)
+  const [finePointer, setFinePointer] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const update = () => setFinePointer(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
+  return (
   <section
     id="hero"
     className="relative flex h-[100svh] min-h-[100svh] overflow-hidden px-3 text-center sm:px-4 md:px-5 lg:px-6"
     style={{ backgroundColor: HERO_BG, color: HERO_TEXT }}
     aria-label="Portfolio hero"
+    onPointerMove={
+      finePointer
+        ? (event) => {
+            setCursor({ x: event.clientX, y: event.clientY })
+            setCursorInHero(true)
+          }
+        : undefined
+    }
+    onPointerLeave={
+      finePointer
+        ? () => {
+            setCursorInHero(false)
+            setCursor(null)
+          }
+        : undefined
+    }
   >
     <HeroNav visible={visible} skipMotion={skipMotion} />
     <HeroBottomMeta visible={textVisible} skipMotion={skipMotion} />
+    {finePointer ? (
+      <HeroCursorScrollLabel cursor={cursorInHero ? cursor : null} visible={textVisible} />
+    ) : null}
 
     <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.2rem,1.1svh,0.85rem)] pb-[clamp(1.5rem,4svh,3rem)] pt-[clamp(3.5rem,8svh,5.25rem)]">
-      <h1 className="hero-mega-type flex w-full flex-wrap items-center justify-center overflow-visible text-[clamp(4rem,18.5vw,min(15rem,34svh))] leading-[0.88]">
+      <h1 className="hero-mega-type flex w-full flex-col items-center justify-center overflow-visible text-[clamp(6.4rem,33vw,min(24rem,54svh))] leading-[0.88] sm:text-[clamp(4rem,18.5vw,min(15rem,34svh))]">
         <span className="sr-only">Marco Suteja</span>
 
-        <span className="inline-flex flex-wrap items-center justify-center overflow-visible" aria-hidden>
-          {HERO_NAME_CHARS.map(({ char, key, loadOrder }) => (
+        <span className="flex flex-col items-center sm:hidden" aria-hidden>
+          {HERO_NAME_LINE_CHARS.map((lineChars, lineIndex) => (
+            <span key={HERO_NAME_LINES[lineIndex]} className="inline-flex items-center justify-center overflow-visible">
+              {lineChars.map(({ char, key, loadOrder }) => (
+                <HoverLetter
+                  key={key}
+                  char={char}
+                  loadOrder={loadOrder}
+                  textVisible={textVisible}
+                  skipMotion={skipMotion}
+                />
+              ))}
+            </span>
+          ))}
+        </span>
+
+        <span className="hidden flex-wrap items-center justify-center overflow-visible sm:inline-flex" aria-hidden>
+          {HERO_NAME_DESKTOP_CHARS.map(({ char, key, loadOrder }) => (
             <HoverLetter
               key={key}
               char={char}
@@ -446,9 +578,9 @@ const HeroLanding = ({
         </span>
       </h1>
 
-      <div className="overflow-hidden pb-[0.14em] -mb-[0.14em]">
+      <div className="overflow-hidden pt-[0.42em] pb-[0.24em] -mt-[0.42em] -mb-[0.24em]">
         <motion.p
-          className="hero-subtitle-type flex flex-wrap items-center justify-center text-[clamp(2rem,8.5vw,min(6.5rem,15svh))] leading-[0.95] tracking-[0.02em]"
+          className="hero-subtitle-type flex flex-wrap items-center justify-center text-[clamp(2rem,8.5vw,min(6.5rem,15svh))] leading-[1.12] tracking-[0.02em]"
           initial={skipMotion ? false : { y: '120%' }}
           animate={textVisible ? { y: 0 } : { y: '120%' }}
           transition={{
@@ -464,20 +596,23 @@ const HeroLanding = ({
         </motion.p>
       </div>
 
-      <div className="grid w-full max-w-[min(92vw,64rem)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-[clamp(0.75rem,2vw,2rem)]">
-        <HeroLocationLabel visible={textVisible} skipMotion={skipMotion} align="right">
-          Based In
-        </HeroLocationLabel>
+      <div className="grid w-full max-w-[min(92vw,64rem)] grid-cols-[1fr_auto_1fr] items-center gap-x-1 sm:gap-x-[clamp(0.75rem,2vw,2rem)]">
+        <div className="flex justify-end">
+          <HeroLocationLabel visible={textVisible} skipMotion={skipMotion} align="right">
+            Based In
+          </HeroLocationLabel>
+        </div>
 
         <HeroReel visible={textVisible} skipMotion={skipMotion} />
 
-        <HeroLocationLabel visible={textVisible} skipMotion={skipMotion} align="left">
-          Burnaby, BC, Canada
-        </HeroLocationLabel>
+        <div className="flex justify-start">
+          <HeroLocationPlace visible={textVisible} skipMotion={skipMotion} />
+        </div>
       </div>
     </div>
   </section>
-)
+  )
+}
 
 const IntroHero = () => {
   const prefersReducedMotion = useReducedMotion()

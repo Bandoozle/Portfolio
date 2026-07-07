@@ -29,13 +29,38 @@ const getColumnCount = (width: number) => {
   return 2
 }
 
+/** Desktop grid: 3 / 2 / 3 / 2 projects per column (project ids). */
+const DESKTOP_GRID_LAYOUT: readonly number[][] = [
+  [1, 5, 10],
+  [2, 6],
+  [7, 11, 3],
+  [4, 8],
+]
+
+const buildGridColumns = (columnCount: number) => {
+  if (columnCount === 4) {
+    return DESKTOP_GRID_LAYOUT.map((projectIds) =>
+      projectIds.map((id) => {
+        const index = portfolioProjects.findIndex((project) => project.id === id)
+        return { project: portfolioProjects[index], index }
+      }),
+    )
+  }
+
+  const cols = Array.from({ length: columnCount }, () => [] as { project: PortfolioProject; index: number }[])
+  portfolioProjects.forEach((project, index) => {
+    cols[index % columnCount].push({ project, index })
+  })
+  return cols
+}
+
 /** Static wave — columns 1 & 3 raised, 2 & 4 lowered */
 const waveOffsetClass = (colIndex: number) =>
   colIndex % 2 === 0
-    ? '-translate-y-8 md:-translate-y-12 lg:-translate-y-16'
-    : 'translate-y-8 md:translate-y-12 lg:translate-y-16'
+    ? '-translate-y-4 sm:-translate-y-8 md:-translate-y-12 lg:-translate-y-16'
+    : 'translate-y-4 sm:translate-y-8 md:translate-y-12 lg:translate-y-16'
 
-const useWaveScrollProgress = (sectionRef: RefObject<HTMLElement | null>) => {
+const useWaveScrollProgress = (sectionRef: RefObject<HTMLDivElement | null>) => {
   const progress = useMotionValue(0)
 
   useEffect(() => {
@@ -68,43 +93,40 @@ const columnOffsetY = (progress: MotionValue<number>, columnIndex: number) => {
   return useTransform(progress, (p) => (p - 0.5) * speed * 2.2)
 }
 
-/** Stable 0–1 value from project id — same panel always gets the same profile. */
-const seededUnit = (seed: number) => {
-  const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453
-  return value - Math.floor(value)
-}
+const MIN_PANEL_OPACITY = 0.4
 
-type PanelFadeProfile = {
-  peak: number
-  width: number
-  maxOpacity: number
-}
+/** Opacity peaks at viewport center; fades toward min when entering from below or exiting above. */
+const useViewportCenterOpacity = (ref: RefObject<HTMLElement | null>) => {
+  const opacity = useMotionValue(1)
 
-const getPanelFadeProfile = (projectId: number): PanelFadeProfile => {
-  const r1 = seededUnit(projectId * 17 + 3)
-  const r2 = seededUnit(projectId * 41 + 7)
-  const r3 = seededUnit(projectId * 59 + 11)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
 
-  return {
-    peak: 0.1 + r1 * 0.8,
-    width: 0.12 + r2 * 0.24,
-    maxOpacity: 0.78 + r3 * 0.22,
-  }
-}
+    const scroller = el.closest('main') ?? window
 
-const panelFadeProfiles = new Map(portfolioProjects.map((project) => [project.id, getPanelFadeProfile(project.id)]))
+    const update = () => {
+      const rect = el.getBoundingClientRect()
+      const centerY = rect.top + rect.height / 2
+      const viewportCenter = window.innerHeight / 2
+      const dist = Math.abs(centerY - viewportCenter)
+      const fadeRange = window.innerHeight * 0.48
+      const linear = Math.max(0, 1 - dist / fadeRange)
+      const smooth = linear * linear * (3 - 2 * linear)
+      opacity.set(MIN_PANEL_OPACITY + smooth * (1 - MIN_PANEL_OPACITY))
+    }
 
-const MIN_PANEL_OPACITY = 0.32
+    scroller.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update, { passive: true })
+    update()
 
-const imagePanelOpacity = (progress: MotionValue<number>, projectId: number) => {
-  const profile = panelFadeProfiles.get(projectId) ?? getPanelFadeProfile(projectId)
+    return () => {
+      scroller.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [ref, opacity])
 
-  return useTransform(progress, (p) => {
-    const dist = Math.abs(p - profile.peak)
-    const linear = Math.max(0, 1 - dist / profile.width)
-    const smooth = linear * linear * (3 - 2 * linear)
-    return MIN_PANEL_OPACITY + smooth * (profile.maxOpacity - MIN_PANEL_OPACITY)
-  })
+  return opacity
 }
 
 const ListRule = ({ className = '' }: { className?: string }) => (
@@ -129,7 +151,7 @@ const ViewToggle = ({
   mode: ViewMode
   onToggle: () => void
 }) => (
-  <div className="flex justify-center pt-16 md:pt-20">
+  <div className="flex justify-center pt-12 md:pt-8">
     <button
       type="button"
       onClick={onToggle}
@@ -167,16 +189,19 @@ const ViewToggle = ({
 const ProjectImage = ({
   project,
   index,
-  imageOpacity,
   className = '',
 }: {
   project: PortfolioProject
   index: number
-  imageOpacity: MotionValue<number>
   className?: string
 }) => {
   const panelRef = useRef<HTMLDivElement>(null)
-  const imageFit = project.imageFit ?? 'cover'
+  const hasMedia = Boolean(project.video || project.image)
+  const mediaClass =
+    'relative z-0 block h-auto w-full transition-transform duration-700 ease-out group-hover:scale-[1.03]'
+  const panelClass = hasMedia
+    ? `relative isolate overflow-hidden w-full ${className}`
+    : `relative isolate overflow-hidden bg-[#191816] ${GRID_IMAGE_CLASS} ${className}`
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const panel = panelRef.current
@@ -193,23 +218,33 @@ const ProjectImage = ({
   }
 
   return (
-    <motion.div
+    <div
       ref={panelRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      style={{
-        opacity: imageOpacity,
-        ...(!project.image
+      style={
+        !project.image && !project.video
           ? { backgroundColor: PLACEHOLDER_TINTS[index % PLACEHOLDER_TINTS.length] }
-          : undefined),
-      }}
-      className={`relative isolate overflow-hidden bg-[#191816] ${GRID_IMAGE_CLASS} ${className}`}
+          : undefined
+      }
+      className={panelClass}
     >
-      {project.image ? (
+      {project.video ? (
+        <video
+          src={project.video}
+          className={mediaClass}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-label={`${project.title} preview`}
+        />
+      ) : project.image ? (
         <img
           src={project.image}
           alt=""
-          className={`relative z-0 h-full w-full ${imageFit === 'contain' ? 'object-contain object-center' : 'object-cover object-center'} transition-transform duration-700 ease-out group-hover:scale-[1.03]`}
+          className={mediaClass}
           loading="lazy"
         />
       ) : (
@@ -241,35 +276,38 @@ const ProjectImage = ({
             'radial-gradient(120px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(229,229,224,0.22) 0%, transparent 62%)',
         }}
       />
-    </motion.div>
+    </div>
   )
 }
 
 const GridProjectCard = ({
   project,
   index,
-  imageOpacity,
   onSelect,
 }: {
   project: PortfolioProject
   index: number
-  imageOpacity: MotionValue<number>
   onSelect: (id: number) => void
 }) => {
+  const cardRef = useRef<HTMLElement>(null)
+  const scrollOpacity = useViewportCenterOpacity(cardRef)
+
   return (
     <motion.article
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.5, delay: index * 0.04, ease: EASE }}
       className="group min-w-0"
     >
-      <button
+      <motion.button
         type="button"
         onClick={() => onSelect(project.id)}
+        style={{ opacity: scrollOpacity }}
         className="block w-full min-w-0 cursor-pointer px-0.5 text-left"
       >
-        <ProjectImage project={project} index={index} imageOpacity={imageOpacity} />
+        <ProjectImage project={project} index={index} />
         <div className="mt-3 flex items-start justify-between gap-4 md:mt-4">
           <h3
             className="min-w-0 text-[clamp(0.85rem,1.4vw,1.15rem)] font-bold uppercase leading-[1.05] tracking-[0.04em] text-[#E5E5E0] transition-opacity duration-300 group-hover:opacity-70"
@@ -292,7 +330,7 @@ const GridProjectCard = ({
             </p>
           </div>
         </div>
-      </button>
+      </motion.button>
     </motion.article>
   )
 }
@@ -313,14 +351,11 @@ const WaveGridColumn = ({
   return (
     <div className={`min-w-0 flex-1 transform ${waveOffsetClass(colIndex)}`}>
       <motion.div style={{ y: columnY }} className="flex flex-col gap-8 sm:gap-y-10 md:gap-y-12">
-        {items.map(({ project, index }, cardIndex) => (
+        {items.map(({ project, index }) => (
           <WaveGridCard
             key={project.id}
             project={project}
             index={index}
-            colIndex={colIndex}
-            cardIndex={cardIndex}
-            scrollProgress={scrollProgress}
             onSelect={onSelect}
           />
         ))}
@@ -332,35 +367,20 @@ const WaveGridColumn = ({
 const WaveGridCard = ({
   project,
   index,
-  colIndex,
-  cardIndex,
-  scrollProgress,
   onSelect,
 }: {
   project: PortfolioProject
   index: number
-  colIndex: number
-  cardIndex: number
-  scrollProgress: MotionValue<number>
   onSelect: (id: number) => void
-}) => {
-  const imageOpacity = imagePanelOpacity(scrollProgress, project.id)
-
-  return (
-    <GridProjectCard
-      project={project}
-      index={index}
-      imageOpacity={imageOpacity}
-      onSelect={onSelect}
-    />
-  )
-}
+}) => (
+  <GridProjectCard project={project} index={index} onSelect={onSelect} />
+)
 
 const WaveGrid = ({
   sectionRef,
   onSelect,
 }: {
-  sectionRef: RefObject<HTMLElement | null>
+  sectionRef: RefObject<HTMLDivElement | null>
   onSelect: (id: number) => void
 }) => {
   const scrollProgress = useWaveScrollProgress(sectionRef)
@@ -374,13 +394,7 @@ const WaveGrid = ({
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const columns = useMemo(() => {
-    const cols = Array.from({ length: columnCount }, () => [] as { project: PortfolioProject; index: number }[])
-    portfolioProjects.forEach((project, index) => {
-      cols[index % columnCount].push({ project, index })
-    })
-    return cols
-  }, [columnCount])
+  const columns = useMemo(() => buildGridColumns(columnCount), [columnCount])
 
   return (
     <div className="flex items-start gap-x-3 sm:gap-x-4 md:gap-x-5 lg:gap-x-6">
@@ -397,14 +411,89 @@ const WaveGrid = ({
   )
 }
 
+const getColumnGap = (width: number) => {
+  if (width >= 1024) return 24
+  if (width >= 768) return 20
+  if (width >= 640) return 16
+  return 12
+}
+
+const useGridPanelWidth = (containerRef: RefObject<HTMLElement | null>) => {
+  const [panelWidth, setPanelWidth] = useState(280)
+
+  useEffect(() => {
+    const update = () => {
+      const container = containerRef.current
+      if (!container) return
+
+      const contentWidth = container.clientWidth
+      const columnCount = getColumnCount(window.innerWidth)
+      const gap = getColumnGap(window.innerWidth)
+      setPanelWidth((contentWidth - gap * (columnCount - 1)) / columnCount)
+    }
+
+    update()
+    window.addEventListener('resize', update, { passive: true })
+    return () => window.removeEventListener('resize', update)
+  }, [containerRef])
+
+  return panelWidth
+}
+
+const LIST_PREVIEW_OFFSET = 20
+
+const ListCursorPreview = ({
+  project,
+  index,
+  cursor,
+  panelWidth,
+  visible,
+}: {
+  project: PortfolioProject | null
+  index: number
+  cursor: { x: number; y: number }
+  panelWidth: number
+  visible: boolean
+}) => {
+  if (!project || !visible || !(project.video || project.image)) return null
+
+  const maxLeft = typeof window !== 'undefined' ? window.innerWidth - panelWidth - 16 : cursor.x
+  const left = Math.min(cursor.x + LIST_PREVIEW_OFFSET, maxLeft)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: EASE }}
+      className="pointer-events-none fixed z-[80]"
+      style={{
+        left,
+        top: cursor.y,
+        width: panelWidth,
+        transform: 'translateY(-50%)',
+      }}
+      aria-hidden
+    >
+      <ProjectImage project={project} index={index} />
+    </motion.div>
+  )
+}
+
 const ListProjectRow = ({
   project,
   index,
   onSelect,
+  onHoverStart,
+  onHoverMove,
+  onHoverEnd,
 }: {
   project: PortfolioProject
   index: number
   onSelect: (id: number) => void
+  onHoverStart: (project: PortfolioProject, index: number) => void
+  onHoverMove: (event: React.MouseEvent<HTMLButtonElement>) => void
+  onHoverEnd: () => void
 }) => {
   const [hovered, setHovered] = useState(false)
 
@@ -420,8 +509,15 @@ const ListProjectRow = ({
         type="button"
         onClick={() => onSelect(project.id)}
         className="flex w-full min-w-0 cursor-pointer flex-col gap-2 py-7 text-left transition-colors duration-300 sm:flex-row sm:items-baseline sm:gap-4 md:grid md:grid-cols-[1fr_minmax(120px,22%)_56px_56px] md:items-baseline md:gap-6 md:py-9 lg:gap-10 hover:bg-[#E5E5E0]/[0.02]"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={() => {
+          setHovered(true)
+          onHoverStart(project, index)
+        }}
+        onMouseMove={onHoverMove}
+        onMouseLeave={() => {
+          setHovered(false)
+          onHoverEnd()
+        }}
       >
         <h3
           className="min-w-0 flex-1 text-[clamp(2rem,6.5vw,5.5rem)] font-bold uppercase leading-[0.92] tracking-[-0.01em] transition-colors duration-300 md:col-span-1"
@@ -432,7 +528,7 @@ const ListProjectRow = ({
         >
           {project.title}
         </h3>
-        <div className="flex shrink-0 items-baseline gap-4 sm:ml-auto md:contents">
+        <div className="flex shrink-0 items-center gap-4 sm:ml-auto md:contents">
           <p
             className="text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 md:block"
             style={{
@@ -469,7 +565,14 @@ const ListProjectRow = ({
 const ProjectsGallerySection = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null)
-  const gridSectionRef = useRef<HTMLElement>(null)
+  const [listHover, setListHover] = useState<{ project: PortfolioProject; index: number } | null>(
+    null,
+  )
+  const [listCursor, setListCursor] = useState({ x: 0, y: 0 })
+  const gridSectionRef = useRef<HTMLDivElement>(null)
+  const projectsInnerRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+  const panelWidth = useGridPanelWidth(projectsInnerRef)
 
   const selectedProject =
     selectedProjectId !== null
@@ -479,9 +582,21 @@ const ProjectsGallerySection = () => {
   const openProject = (id: number) => setSelectedProjectId(id)
   const closeProject = () => setSelectedProjectId(null)
 
+  const handleListHoverStart = (project: PortfolioProject, index: number) => {
+    setListHover({ project, index })
+  }
+
+  const handleListHoverMove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setListCursor({ x: event.clientX, y: event.clientY })
+  }
+
+  const handleListHoverEnd = () => {
+    setListHover(null)
+  }
+
   return (
-    <section id="projects" className="bg-[#0B0B0A] py-[10vh] text-[#E5E5E0] md:py-[12vh]">
-      <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
+    <section ref={sectionRef} id="projects" className="bg-[#0B0B0A] pt-[8vh] pb-12 text-[#E5E5E0] md:pt-[10vh] md:pb-16">
+      <div ref={projectsInnerRef} className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
         <AnimatePresence mode="wait">
           {viewMode === 'grid' ? (
             <motion.div
@@ -491,7 +606,7 @@ const ProjectsGallerySection = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="overflow-visible pt-12 pb-16 md:pt-16 md:pb-20 lg:pt-20 lg:pb-24"
+              className="overflow-visible pb-10 pt-12 md:pb-0 md:pt-16 lg:pt-20"
             >
               <WaveGrid sectionRef={gridSectionRef} onSelect={openProject} />
             </motion.div>
@@ -504,15 +619,51 @@ const ProjectsGallerySection = () => {
               transition={{ duration: 0.35, ease: EASE }}
             >
               {portfolioProjects.map((project, i) => (
-                <ListProjectRow key={project.id} project={project} index={i} onSelect={openProject} />
+                <ListProjectRow
+                  key={project.id}
+                  project={project}
+                  index={i}
+                  onSelect={openProject}
+                  onHoverStart={handleListHoverStart}
+                  onHoverMove={handleListHoverMove}
+                  onHoverEnd={handleListHoverEnd}
+                />
               ))}
               <ListRule />
             </motion.div>
           )}
         </AnimatePresence>
 
-        <ViewToggle mode={viewMode} onToggle={() => setViewMode((v) => (v === 'grid' ? 'list' : 'grid'))} />
+        <ViewToggle
+          mode={viewMode}
+          onToggle={() => {
+            setViewMode((v) => {
+              const next = v === 'grid' ? 'list' : 'grid'
+              if (next === 'grid') setListHover(null)
+              if (next === 'list') {
+                setListHover(null)
+                requestAnimationFrame(() => {
+                  sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                })
+              }
+              return next
+            })
+          }}
+        />
       </div>
+
+      <AnimatePresence>
+        {viewMode === 'list' && listHover ? (
+          <ListCursorPreview
+            key={listHover.project.id}
+            project={listHover.project}
+            index={listHover.index}
+            cursor={listCursor}
+            panelWidth={panelWidth}
+            visible={typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches}
+          />
+        ) : null}
+      </AnimatePresence>
 
       <AnimatePresence>
         {selectedProject ? (

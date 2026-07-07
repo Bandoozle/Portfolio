@@ -1,38 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'BlurWeb Medium W03';
-  src: url('/BlurWeb-MediumW03-Regular/web/font/BlurWeb-MediumW03-Regular.woff2') format('woff2'),
-    url('/BlurWeb-MediumW03-Regular/web/font/BlurWeb-MediumW03-Regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Art Post Black';
-  src: url('/Art Post black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'jmh_typewriter';
-  src: url('/jmh_typewriter/JMH%20Typewriter.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'jmh_typewriter';
-  src: url('/jmh_typewriter/JMH%20Typewriter-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Hero fonts */
 @font-face {
   font-family: 'Brunson';
@@ -72,13 +39,6 @@
   overflow-y: visible;
 }
 
-.hero-util-type {
-  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
 .hero-subtitle-type {
   font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
   font-weight: 400;
@@ -89,27 +49,6 @@
   font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
 }
 
-.font-case-hand {
-  font-family: 'Art Post Black', cursive;
-  font-weight: 900;
-}
-
-/* Projects (#projects): typewriter UI + background art scaled to fit (contain — never cropped) */
-.projects-section-scope {
-  font-family: 'jmh_typewriter', 'Courier New', Courier, monospace;
-  font-weight: 400;
-}
-
-/* ─── Marquee / ticker strip ─── */
-@keyframes marquee-left {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee-left 36s linear infinite;
-  will-change: transform;
-}
-
 /* ─── FAQ accordion ─── */
 .faq-content {
   display: grid;
@@ -118,13 +57,6 @@
 }
 .faq-content.open {
   grid-template-rows: 1fr;
-}
-
-.projects-collage-layer {
-  background-image: url('/projects_background.png');
-  background-position: center;
-  background-size: 90%;
-  background-repeat: no-repeat;
 }
 
 @theme {
@@ -170,13 +102,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  overflow-x: clip;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 html {
   scroll-behavior: smooth;
   overflow: hidden;
+  overflow-x: clip;
+  min-height: 100vh;
+  min-height: 100dvh;
   height: 100vh;
+  height: 100dvh;
 }
 
 /* Hide scrollbar completely */
@@ -191,217 +131,5 @@ body,
 * {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-}
-
-.glass {
-  background: linear-gradient(135deg, rgba(20, 20, 26, 0.7) 0%, rgba(11, 11, 15, 0.7) 100%);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 229, 196, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.noise-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.55'/%3E%3C/svg%3E");
-}
-
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-.instrument-serif-italic {
-  font-family: 'Instrument Serif', serif;
-  font-style: italic;
-}
-
-.glass-strong {
-  background: linear-gradient(135deg, rgba(28, 28, 36, 0.9) 0%, rgba(20, 20, 26, 0.9) 100%);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(0, 229, 196, 0.15);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
-}
-
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #00E5C4 0%, #F5B73A 100%);
-}
-
-.text-gradient-teal {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #33EDCE 0%, #00E5C4 50%, #00B89F 100%);
-}
-
-.text-gradient-amber {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #F7C65B 0%, #F5B73A 50%, #E0A020 100%);
-}
-
-.glow-teal {
-  box-shadow: 0 0 40px rgba(0, 229, 196, 0.3), 0 0 80px rgba(0, 229, 196, 0.1);
-}
-
-.glow-amber {
-  box-shadow: 0 0 40px rgba(245, 183, 58, 0.3), 0 0 80px rgba(245, 183, 58, 0.1);
-}
-
-.glow-box-hover:hover {
-  box-shadow: 0 0 50px rgba(0, 229, 196, 0.4), 0 0 100px rgba(0, 229, 196, 0.15);
-  border-color: rgba(0, 229, 196, 0.3);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.animation-delay-200 {
-  animation-delay: 200ms;
-}
-
-.animation-delay-400 {
-  animation-delay: 400ms;
-}
-
-.animation-delay-600 {
-  animation-delay: 600ms;
-}
-
-@keyframes gradient {
-  0%, 100% {
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-  50% {
-    background-size: 200% 200%;
-    background-position: right center;
-  }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes glow {
-  0% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.5); }
-  100% { box-shadow: 0 0 30px rgba(249, 115, 22, 0.8); }
-}
-
-.animate-gradient {
-  animation: gradient 8s linear infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-glow {
-  animation: glow 2s ease-in-out infinite alternate;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0B0B0A;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #00E5C4 0%, #00B89F 100%);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #33EDCE 0%, #00E5C4 100%);
-}
-
-/* Terminal/Cable Effects */
-.terminal-window {
-  font-family: var(--font-mono);
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--color-amber);
-  box-shadow: 0 0 20px rgba(233, 165, 63, 0.3);
-}
-
-.cable-glow {
-  filter: drop-shadow(0 0 8px var(--color-amber)) brightness(1.2);
-  animation: cable-pulse 3s ease-in-out infinite;
-}
-
-.scanline {
-  position: relative;
-  overflow: hidden;
-}
-
-.scanline::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-teal), transparent);
-  animation: scanline-sweep 3s linear infinite;
-}
-
-@keyframes cable-pulse {
-  0%, 100% {
-    opacity: 0.8;
-    filter: drop-shadow(0 0 8px var(--color-amber)) brightness(1);
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 15px var(--color-amber)) brightness(1.3);
-  }
-}
-
-@keyframes scanline-sweep {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-@keyframes terminal-blink {
-  0%, 49% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
-}
-
-.terminal-cursor {
-  animation: terminal-blink 1s step-end infinite;
-}
-
-.static-noise {
-  position: relative;
-  overflow: hidden;
-}
-
-.static-noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-.static-noise:hover::after {
-  opacity: 1;
-  animation: flicker 0.15s infinite;
-}
-
-@keyframes flicker {
-  0%, 100% { opacity: 0.05; }
-  50% { opacity: 0.15; }
 }
 

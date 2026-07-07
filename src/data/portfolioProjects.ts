@@ -1,7 +1,15 @@
 /** Professional-layer project entries (mirrors retro portfolio projects). */
 
-import braintumorImage from '../images/braintumor.jpeg'
+import bargaiImage from '../images/bargai.png'
+import blueprintVideo from '../images/blueprint.mp4'
+import brainVideo from '../images/brain.mp4'
+import droneImage from '../images/drone.png'
+import fourVideo from '../images/four.mp4'
+import plannerImage from '../images/planner.png'
+import careconnectVideo from '../images/careconnect.mp4'
 import herdImage from '../images/herd.png'
+import speakEasyImage from '../images/speakeasy.png'
+import monkeyVideo from '../images/monkeypox.mp4'
 
 export type ProjectGroup = 'main' | 'professional'
 
@@ -22,6 +30,8 @@ export interface PortfolioProject {
   result: string
   github?: string
   image?: string
+  /** Looping panel preview video (replaces image when set). */
+  video?: string
   /** Use contain for non-landscape assets so nothing important gets cropped. */
   imageFit?: 'cover' | 'contain'
   /** Display year in grid/list meta (PODIUM-style). */
@@ -50,6 +60,7 @@ export const portfolioProjects: PortfolioProject[] = [
     result:
       'Achieved under 3-second pipeline latency for live caption-to-insight generation. Enabled contextual decision support during live conversations.',
     github: 'https://github.com/marco-suteja/BargAI',
+    image: bargaiImage,
     year: '2025',
     category: 'AI Assistant',
     group: 'main',
@@ -72,31 +83,32 @@ export const portfolioProjects: PortfolioProject[] = [
     result:
       'Improved validation Dice scores on BraTS dataset. Reduced manual data preparation time by 40% and failed training runs by 30%.',
     github: 'https://github.com/marco-suteja/BrainTumor3DSegNet',
-    image: braintumorImage,
-    imageFit: 'contain',
+    video: brainVideo,
     year: '2024',
     category: 'Medical ML',
     group: 'main',
   },
   {
-    id: 3,
-    navLabel: 'SPEAKEASY',
-    title: 'SpeakEasy',
-    subtitle: 'Real-Time Sign Language Interpreter',
-    tagline: 'Real-Time Sign Language Interpreter | sub-100ms latency',
+    id: 7,
+    navLabel: 'MONKEYPOX CLASSIFIER',
+    title: 'Monkeypox / HFMD Image Classification',
+    subtitle: 'Monkeypox / HFMD Image Classification',
+    tagline: 'Lesion Severity Classification | TensorFlow/Keras',
     description:
-      'SpeakEasy is a real-time sign language interpretation web app that converts hand gesture model outputs into user-facing predictions. I built the React frontend and FastAPI backend, optimized model inference endpoints, and improved latency by 35% for a smoother real-time experience.',
-    stack: ['FastAPI', 'React', 'TensorFlow', 'MediaPipe'],
+      'This medical image classification project focused on distinguishing visual patterns across infectious skin-condition image datasets. I worked on preprocessing, model training, evaluation, and classification-performance analysis to support automated image-based disease screening workflows.',
+    stack: ['Python', 'TensorFlow', 'PyTorch', 'Deep Learning'],
     problem:
-      'ASL users face communication barriers because real-time sign language interpretation tools are either too slow or inaccessible to deploy.',
+      'Rapid Monkeypox diagnosis is critical but visual severity assessment is subjective and inconsistent, especially with imbalanced clinical datasets.',
     solution:
-      'Built real-time ASL recognition using MediaPipe for hand landmark extraction and TensorFlow for gesture classification, achieving sub-100ms latency.',
+      'Built a CNN classifier in TensorFlow/Keras for lesion severity on imbalanced datasets, applying class balancing and cross-validation techniques.',
     contribution:
-      'Designed FastAPI backend reducing API response time by 35%, built React frontend, integrated MediaPipe + TensorFlow inference pipeline, and deployed on Vercel and Render.',
-    result: 'Achieved sub-100ms inference latency. Deployed full-stack app with 35% improvement in API response time.',
-    github: 'https://github.com/marco-suteja/SpeakEasy',
-    year: '2024',
-    category: 'Real-Time ML',
+      'Designed classification pipeline, applied class balancing strategies, and automated the training workflow to accelerate experimentation cycles.',
+    result:
+      'Improved validation accuracy by 15% through class balancing and cross-validation. Reduced experimentation time by 30% via automated training pipeline.',
+    github: 'https://github.com/marco-suteja/MonkeypoxClassifier',
+    year: '2023',
+    category: 'Computer Vision',
+    video: monkeyVideo,
     group: 'main',
   },
   {
@@ -117,6 +129,7 @@ export const portfolioProjects: PortfolioProject[] = [
     result:
       'Achieved 25% improvement in interaction efficiency through drag-and-drop. Reduced data inconsistencies by 20% through validation logic.',
     github: 'https://github.com/marco-suteja/PlannerBuddy',
+    image: plannerImage,
     year: '2024',
     category: 'Productivity',
     group: 'main',
@@ -141,6 +154,7 @@ export const portfolioProjects: PortfolioProject[] = [
     github: 'https://github.com/marco-suteja/CareConnect',
     year: '2023',
     category: 'Healthcare',
+    video: careconnectVideo,
     group: 'main',
   },
   {
@@ -161,31 +175,31 @@ export const portfolioProjects: PortfolioProject[] = [
     result:
       'Achieved 1.5–2.5x runtime speedup using ECBS while maintaining near-optimal path cost. Provided comprehensive analysis of trade-offs across algorithms.',
     github: 'https://github.com/marco-suteja/mapf-uav',
+    image: droneImage,
     year: '2024',
     category: 'Robotics',
     group: 'main',
   },
   {
-    id: 7,
-    navLabel: 'MONKEYPOX CLASSIFIER',
-    title: 'Monkeypox / HFMD Image Classification',
-    subtitle: 'Monkeypox / HFMD Image Classification',
-    tagline: 'Lesion Severity Classification | TensorFlow/Keras',
+    id: 11,
+    navLabel: 'SFU BLUEPRINT',
+    title: 'SFU Blueprint Website Revamp',
+    subtitle: 'Nonprofit Website Revamp',
+    tagline: 'SFU Blueprint | React + Vite',
     description:
-      'This medical image classification project focused on distinguishing visual patterns across infectious skin-condition image datasets. I worked on preprocessing, model training, evaluation, and classification-performance analysis to support automated image-based disease screening workflows.',
-    stack: ['Python', 'TensorFlow', 'PyTorch', 'Deep Learning'],
+      'This project involved building production-ready frontend features for nonprofit websites through SFU Blueprint. I translated Figma designs into responsive React/Vite components, refactored reusable layouts, shipped multiple production page updates, and improved site performance by 30%.',
+    stack: ['React', 'Vite', 'Tailwind CSS', 'Git'],
     problem:
-      'Rapid Monkeypox diagnosis is critical but visual severity assessment is subjective and inconsistent, especially with imbalanced clinical datasets.',
+      'Non-profit clients needed responsive, production-ready web features delivered from design specs on tight volunteer timelines.',
     solution:
-      'Built a CNN classifier in TensorFlow/Keras for lesion severity on imbalanced datasets, applying class balancing and cross-validation techniques.',
+      'Translated Figma designs into responsive React/Vite components and shipped iterative production updates for nonprofit sites.',
     contribution:
-      'Designed classification pipeline, applied class balancing strategies, and automated the training workflow to accelerate experimentation cycles.',
-    result:
-      'Improved validation accuracy by 15% through class balancing and cross-validation. Reduced experimentation time by 30% via automated training pipeline.',
-    github: 'https://github.com/marco-suteja/MonkeypoxClassifier',
-    year: '2023',
-    category: 'Computer Vision',
-    group: 'main',
+      'Built responsive components, refactored reusable layouts, and improved site performance by 30%.',
+    result: 'Delivered multiple production page updates for nonprofit clients through SFU Blueprint.',
+    video: blueprintVideo,
+    year: '2024',
+    category: 'Nonprofit',
+    group: 'professional',
   },
   {
     id: 8,
@@ -205,30 +219,10 @@ export const portfolioProjects: PortfolioProject[] = [
     result:
       'Currently in active development. Core review and rating features underway with social follow/discovery mechanics planned.',
     github: 'https://github.com/marco-suteja/herd',
-    image: herdImage,
     year: '2025',
     category: 'Social Platform',
+    image: herdImage,
     group: 'main',
-  },
-  {
-    id: 9,
-    navLabel: 'KOSICK',
-    title: 'Kosick Business Growth Platform',
-    subtitle: 'Internal Business Growth Platform',
-    tagline: 'KPI Dashboards | Next.js + Supabase',
-    description:
-      'This is an internal business growth platform that helps service businesses track KPIs, revenue goals, stage progress, and operational insights. I built authenticated dashboards, role-based user flows, reusable analytics cards, progress views, and PDF export workflows across four business data categories.',
-    stack: ['Next.js', 'TypeScript', 'Supabase', 'React'],
-    problem:
-      'Service businesses need a unified view of KPIs, revenue goals, and operational progress without juggling disconnected spreadsheets and tools.',
-    solution:
-      'Built an authenticated internal platform with role-based flows, analytics dashboards, and exportable progress reports across business data categories.',
-    contribution:
-      'Developed authenticated dashboards, reusable analytics cards, progress views, and PDF export workflows.',
-    result: 'Delivered a production internal platform for tracking KPIs, goals, and operational insights.',
-    year: '2025',
-    category: 'Business Platform',
-    group: 'professional',
   },
   {
     id: 10,
@@ -246,49 +240,31 @@ export const portfolioProjects: PortfolioProject[] = [
     contribution:
       'Developed the storefront, improved page performance by 25%, and implemented analytics tracking for sales funnel visibility.',
     result: 'Shipped a production e-commerce site with measurably faster page loads and analytics-driven funnel insights.',
+    video: fourVideo,
     year: '2024',
     category: 'E-Commerce',
     group: 'professional',
   },
   {
-    id: 11,
-    navLabel: 'SFU BLUEPRINT',
-    title: 'SFU Blueprint Website Revamp',
-    subtitle: 'Nonprofit Website Revamp',
-    tagline: 'SFU Blueprint | React + Vite',
+    id: 3,
+    navLabel: 'SPEAKEASY',
+    title: 'SpeakEasy',
+    subtitle: 'Real-Time Sign Language Interpreter',
+    tagline: 'Real-Time Sign Language Interpreter | sub-100ms latency',
     description:
-      'This project involved building production-ready frontend features for nonprofit websites through SFU Blueprint. I translated Figma designs into responsive React/Vite components, refactored reusable layouts, shipped multiple production page updates, and improved site performance by 30%.',
-    stack: ['React', 'Vite', 'Tailwind CSS', 'Git'],
+      'SpeakEasy is a real-time sign language interpretation web app that converts hand gesture model outputs into user-facing predictions. I built the React frontend and FastAPI backend, optimized model inference endpoints, and improved latency by 35% for a smoother real-time experience.',
+    stack: ['FastAPI', 'React', 'TensorFlow', 'MediaPipe'],
     problem:
-      'Non-profit clients needed responsive, production-ready web features delivered from design specs on tight volunteer timelines.',
+      'ASL users face communication barriers because real-time sign language interpretation tools are either too slow or inaccessible to deploy.',
     solution:
-      'Translated Figma designs into responsive React/Vite components and shipped iterative production updates for nonprofit sites.',
+      'Built real-time ASL recognition using MediaPipe for hand landmark extraction and TensorFlow for gesture classification, achieving sub-100ms latency.',
     contribution:
-      'Built responsive components, refactored reusable layouts, and improved site performance by 30%.',
-    result: 'Delivered multiple production page updates for nonprofit clients through SFU Blueprint.',
+      'Designed FastAPI backend reducing API response time by 35%, built React frontend, integrated MediaPipe + TensorFlow inference pipeline, and deployed on Vercel and Render.',
+    result: 'Achieved sub-100ms inference latency. Deployed full-stack app with 35% improvement in API response time.',
+    github: 'https://github.com/marco-suteja/SpeakEasy',
     year: '2024',
-    category: 'Nonprofit',
-    group: 'professional',
-  },
-  {
-    id: 12,
-    navLabel: 'PORTFOLIO',
-    title: 'Personal Portfolio Website',
-    subtitle: 'Interactive Portfolio Website',
-    tagline: 'React + Vite + Framer Motion',
-    description:
-      'My portfolio website is an interactive personal site designed to showcase my full-stack, AI, and product engineering work. I focused on responsive layouts, motion-driven sections, strong visual hierarchy, and a modern UI that presents projects, experience, and technical skills clearly.',
-    stack: ['React', 'Vite', 'Tailwind CSS', 'Framer Motion'],
-    problem:
-      'Needed a portfolio that reflects both engineering depth and product sensibility — not a generic template site.',
-    solution:
-      'Built an interactive portfolio with scroll-driven motion, editorial layout sections, and a dual professional/personal layer experience.',
-    contribution:
-      'Designed and implemented responsive layouts, motion-driven sections, and a cohesive visual system across the full site.',
-    result: 'Shipped a production portfolio site with distinct professional and personal experiences.',
-    github: 'https://github.com/Bandoozle/personalwebsite',
-    year: '2025',
-    category: 'Portfolio',
-    group: 'professional',
+    category: 'Real-Time ML',
+    group: 'main',
+    image: speakEasyImage,
   },
 ]

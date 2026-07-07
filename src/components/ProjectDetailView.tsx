@@ -37,7 +37,7 @@ const ProjectDetailView = ({ project, onClose }: ProjectDetailViewProps) => {
     }
   }, [onClose])
 
-  const imageFit = project.imageFit ?? 'cover'
+  const hasMedia = Boolean(project.video || project.image)
 
   return (
     <motion.div
@@ -62,7 +62,7 @@ const ProjectDetailView = ({ project, onClose }: ProjectDetailViewProps) => {
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-[3px] border border-solid text-[#E5E5E0]/70 transition-colors duration-200 hover:border-[#E5E5E0]/40 hover:text-[#E5E5E0]"
+          className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-[3px] border border-solid text-[#E5E5E0]/70 transition-colors duration-200 hover:border-[#E5E5E0]/40 hover:text-[#E5E5E0] sm:right-4 sm:top-4"
           style={{ borderColor: 'rgba(229, 229, 224, 0.15)' }}
           aria-label="Close project details"
         >
@@ -71,16 +71,29 @@ const ProjectDetailView = ({ project, onClose }: ProjectDetailViewProps) => {
           </span>
         </button>
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 overflow-y-auto md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-stretch">
           <div
-            className="relative min-h-[220px] bg-[#0B0B0A] sm:min-h-[280px] md:min-h-0 md:aspect-auto md:h-full"
-            style={!project.image ? { backgroundColor: '#161614' } : undefined}
+            className={`relative flex items-center justify-center bg-[#0B0B0A] ${
+              hasMedia ? 'min-h-[220px] sm:min-h-[280px]' : 'min-h-[220px] sm:min-h-[280px] md:min-h-full'
+            }`}
+            style={!hasMedia ? { backgroundColor: '#161614' } : undefined}
           >
-            {project.image ? (
+            {project.video ? (
+              <video
+                src={project.video}
+                className="max-h-[70vh] w-full object-contain md:max-h-full"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                aria-label={`${project.title} preview`}
+              />
+            ) : project.image ? (
               <img
                 src={project.image}
                 alt=""
-                className={`h-full w-full min-h-[220px] md:min-h-full ${imageFit === 'contain' ? 'object-contain object-center' : 'object-cover object-center'}`}
+                className="max-h-[70vh] w-full object-contain md:max-h-full"
               />
             ) : (
               <div className="flex h-full min-h-[220px] items-end p-6 md:min-h-full">
