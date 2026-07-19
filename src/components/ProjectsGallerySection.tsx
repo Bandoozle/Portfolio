@@ -29,10 +29,10 @@ const getColumnCount = (width: number) => {
   return 2
 }
 
-/** Desktop grid: 3 / 2 / 3 / 2 projects per column (project ids). */
+/** Desktop grid: 3 / 3 / 3 / 2 projects per column (project ids). */
 const DESKTOP_GRID_LAYOUT: readonly number[][] = [
-  [1, 5, 10],
-  [2, 6],
+  [12, 5, 10],
+  [1, 2, 6],
   [7, 11, 3],
   [4, 8],
 ]

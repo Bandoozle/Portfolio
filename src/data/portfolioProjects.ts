@@ -5,6 +5,7 @@ import blueprintVideo from '../images/blueprint.mp4'
 import brainVideo from '../images/brain.mp4'
 import droneImage from '../images/drone.png'
 import fourVideo from '../images/four.mp4'
+import gitwrappedImage from '../images/gitwrapped.png'
 import plannerImage from '../images/planner.png'
 import careconnectVideo from '../images/careconnect.mp4'
 import herdImage from '../images/herd.png'
@@ -42,6 +43,29 @@ export interface PortfolioProject {
 }
 
 export const portfolioProjects: PortfolioProject[] = [
+  {
+    id: 12,
+    navLabel: 'GITWRAPPED',
+    title: 'GitWrapped',
+    subtitle: 'GitHub → Shareable Project Carousel',
+    tagline: 'Turn any repo into a recruiter-ready carousel | Next.js',
+    description:
+      'GitWrapped turns any GitHub repository into a beautiful, shareable 4-card carousel for LinkedIn, X, portfolios, and resumes. Sign in with GitHub OAuth, import a repo, edit project / features / engineering / shipped cards, then publish a live share link at /s/[id] or export PNGs for social uploads.',
+    stack: ['Next.js', 'TypeScript', 'Auth.js', 'Vercel Blob', 'GitHub OAuth'],
+    problem:
+      'Developers struggle to present GitHub work as polished, shareable stories for recruiters and social — screenshots and READMEs do not travel well on LinkedIn or X.',
+    solution:
+      'Built a Next.js app that imports a repo via GitHub OAuth, generates a recruiter-ready 4-card carousel, and publishes durable share links plus PNG exports for LinkedIn, Instagram, and X.',
+    contribution:
+      'Designed the import → template → edit → publish flow, wired GitHub OAuth with minimal scopes, share persistence via Vercel Blob for live /s/[id] links, and PNG export for social uploads. Drafts stay in localStorage; only owners can overwrite published shares.',
+    result:
+      'Shipped an end-to-end product: OAuth sign-in, repo import, editable carousel cards, shareable live links, and downloadable PNGs — distinguishing GitHub signals, system suggestions, and user edits.',
+    github: 'https://github.com/marco-suteja/GitWrapped',
+    image: gitwrappedImage,
+    year: '2026',
+    category: 'Developer Tool',
+    group: 'main',
+  },
   {
     id: 1,
     navLabel: 'BARGAI',
