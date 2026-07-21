@@ -6,6 +6,7 @@ import brainVideo from '../images/brain.mp4'
 import droneImage from '../images/drone.png'
 import fourVideo from '../images/four.mp4'
 import gitwrappedImage from '../images/gitwrapped.png'
+import jobshieldImage from '../images/JobShield.png'
 import plannerImage from '../images/planner.png'
 import careconnectVideo from '../images/careconnect.mp4'
 import herdImage from '../images/herd.png'
@@ -43,6 +44,29 @@ export interface PortfolioProject {
 }
 
 export const portfolioProjects: PortfolioProject[] = [
+  {
+    id: 13,
+    navLabel: 'JOBSHIELD',
+    title: 'JobShield',
+    subtitle: 'Explainable Job Posting Fraud Review',
+    tagline: 'ML fraud signals · salary anomalies · duplicate detection | FastAPI + Next.js',
+    description:
+      'JobShield is an explainable machine-learning platform that reviews online job postings for fraud indicators, salary anomalies, and duplicate or reposted content. It never claims a listing is definitely fraudulent — it returns calibrated signals such as low risk, review recommended, multiple unusual signals, insufficient information, and high similarity to previously observed listings, with SHAP-style explanations from sklearn pipelines you train and serve yourself.',
+    stack: ['Next.js', 'FastAPI', 'Python', 'scikit-learn', 'XGBoost', 'Chrome Extension'],
+    problem:
+      'Online job seekers face employment scams, misleading compensation, and repeatedly recycled listings, but most tools either overclaim certainty or rely on opaque LLM guesses instead of auditable ML signals.',
+    solution:
+      'Built a monorepo with a Next.js dashboard, Chrome MV3 side-panel extension, and FastAPI ML API serving TF-IDF + Logistic Regression and XGBoost fraud pipelines trained on EMSCAD, with salary checks, duplicate fingerprinting, and explainable coefficients.',
+    contribution:
+      'Designed the full stack — web app, extension, and ML API — plus data prep, baseline/improved model selection by validation PR-AUC, SQLite/Postgres history storage, batch analyze API, and ethical guardrails that analyze only after deliberate user action.',
+    result:
+      'Shipped end-to-end analysis: single and batch posting review, model metadata and evaluation artifacts, demo listings, analysis history, user feedback loop, and offline-capable SQLite default with optional Postgres deployment on Vercel.',
+    github: 'https://github.com/marco-suteja/JobShield',
+    image: jobshieldImage,
+    year: '2026',
+    category: 'ML Platform',
+    group: 'main',
+  },
   {
     id: 12,
     navLabel: 'GITWRAPPED',
