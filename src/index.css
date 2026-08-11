@@ -1,103 +1,170 @@
 @import "tailwindcss";
 
-/* Hero fonts */
+/* ─── Site typeface: PolySans only ─── */
+
+/* PolySans trial — /public/fonts/polysans/ */
 @font-face {
-  font-family: 'Brunson';
-  src: url('/fonts/brunson/Brunson.ttf') format('truetype');
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-slim.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysansitalictrial-slimitalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-neutral.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: 'Pink Average';
-  src:
-    url('/fonts/pink-average/PinkAverage-Regular.otf') format('opentype'),
-    url('/fonts/pink-average/PinkAverage-Regular.ttf') format('truetype');
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysansitalictrial-neutralitalic.otf') format('opentype');
   font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-median.otf') format('opentype');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: 'Pink Average';
-  src:
-    url('/fonts/pink-average/PinkAverage-Italic.otf') format('opentype'),
-    url('/fonts/pink-average/PinkAverage-Italic.ttf') format('truetype');
-  font-weight: 400;
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysansitalictrial-medianitalic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-median.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-bulky.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysansitalictrial-bulkyitalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-bulky.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysanstrial-bulky.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PolySans';
+  src: url('/fonts/polysans/polysansitalictrial-bulkyitalic.otf') format('opentype');
+  font-weight: 900;
   font-style: italic;
   font-display: swap;
 }
 
 /* Hero display + utility type */
 .hero-mega-type {
-  font-family: 'Brunson', 'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.004em;
+  font-family: 'PolySans', system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 0.78;
   overflow-x: clip;
   overflow-y: visible;
 }
 
 .hero-subtitle-type {
-  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
+  font-family: 'PolySans', system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: 0.02em;
 }
 
 .hero-section-scope {
-  font-family: 'Pink Average', 'Instrument Serif', Georgia, serif;
-}
-
-/* ─── FAQ accordion ─── */
-.faq-content {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.faq-content.open {
-  grid-template-rows: 1fr;
+  font-family: 'PolySans', system-ui, sans-serif;
 }
 
 @theme {
-  /* Brand neutrals */
-  --color-ink: #0B0B0A;
-  --color-paper: #E5E5E0;
-  --color-gray-dark: #191816;
+  --color-orange: #f15720;
+  --color-accent: #f15720;
 
-  /* Deep charcoal background system */
-  --color-charcoal: #0B0B0A;
-  --color-charcoal-light: #191816;
-  --color-charcoal-lighter: #222220;
+  --color-ink: #201D1D;
+  --color-paper: #F4F4F4;
+  --color-border: #E0E0E0;
 
-  /* Teal accent */
-  --color-teal: #00E5C4;
-  --color-teal-dark: #00B89F;
-  --color-teal-light: #33EDCE;
+  --color-charcoal: #201D1D;
+  --color-charcoal-light: #333333;
+  --color-charcoal-lighter: #666666;
 
-  /* Amber accent */
-  --color-amber: #F5B73A;
-  --color-amber-dark: #E0A020;
-  --color-amber-light: #F7C65B;
+  --color-teal: #f15720;
+  --color-teal-dark: #d44a18;
+  --color-teal-light: #f57a4a;
 
-  /* Prisma professional layer */
-  --color-primary: #E5E5E0;
+  --color-amber: #f15720;
+  --color-amber-dark: #d44a18;
+  --color-amber-light: #f57a4a;
 
-  /* Typography */
-  --font-heading: 'Roboto Flex', 'Satoshi', 'Inter', system-ui, sans-serif;
-  --font-body: 'Clarity City', 'Inter', 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-  --font-serif: '"Instrument Serif"', serif;
+  --color-primary: #f15720;
+
+  --font-heading: 'PolySans', system-ui, sans-serif;
+  --font-body: 'PolySans', system-ui, sans-serif;
+  --font-mono: 'PolySans', system-ui, sans-serif;
+  --font-serif: 'PolySans', system-ui, sans-serif;
+}
+
+:root {
+  --site-bg: #F4F4F4;
+  --site-ink: #201D1D;
+  --site-border: #E0E0E0;
+  --site-surface: #eaeaea;
+  --site-accent: #f15720;
+  --site-muted: rgba(32, 29, 29, 0.55);
 }
 
 * {
-  border-color: rgba(0, 229, 196, 0.1);
+  border-color: var(--site-border);
+}
+
+a[href],
+button:not(:disabled),
+[role="button"],
+summary,
+label[for],
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+select:not(:disabled) {
+  cursor: pointer;
 }
 
 body {
-  background-color: #0B0B0A;
-  color: #E5E5E0;
-  font-family: 'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--site-bg);
+  color: var(--site-ink);
+  font-family: 'PolySans', system-ui, sans-serif;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -132,4 +199,3 @@ body,
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
-

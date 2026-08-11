@@ -1,15 +1,31 @@
 import { useRef } from 'react'
 import IntroHero from './IntroHero'
-import PortfolioMiddle from './PortfolioMiddle'
+import ExperienceSection from './ExperienceSection'
+import { CtaSection, FaqSection } from './PortfolioMiddle'
+import ProjectsGallerySection from './ProjectsGallerySection'
+import { cssBg, cssInk } from '../theme/palette'
 
 const ProfessionalLayer = () => {
   const scrollRef = useRef<HTMLElement>(null)
 
   return (
-    <main ref={scrollRef} className="h-[100dvh] overflow-x-clip overflow-y-auto overscroll-y-contain bg-[#0B0B0A] text-primary [-webkit-overflow-scrolling:touch]">
-      <IntroHero />
-      <PortfolioMiddle />
-    </main>
+    <div
+      data-main
+      className="relative z-[2] h-[100dvh] w-full"
+      style={{ backgroundColor: cssBg, color: cssInk }}
+    >
+      <main
+        ref={scrollRef}
+        className="h-full overflow-x-clip overflow-y-auto overscroll-y-contain scroll-pt-24 pb-[4.75rem] [-webkit-overflow-scrolling:touch] sm:pb-0 sm:scroll-pt-28"
+        style={{ backgroundColor: cssBg, color: cssInk }}
+      >
+        <IntroHero />
+        <ProjectsGallerySection />
+        <ExperienceSection />
+        <FaqSection />
+        <CtaSection />
+      </main>
+    </div>
   )
 }
 

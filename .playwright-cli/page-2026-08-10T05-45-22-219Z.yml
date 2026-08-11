@@ -1,0 +1,412 @@
+- main [ref=e5]:
+  - region "Portfolio hero" [ref=e7]:
+    - navigation "Primary" [ref=e8]:
+      - generic [ref=e9]:
+        - list [ref=e10]:
+          - listitem [ref=e11]:
+            - link "Projects" [ref=e12] [cursor=pointer]:
+              - /url: "#projects"
+          - listitem [ref=e13]:
+            - link "About" [ref=e14] [cursor=pointer]:
+              - /url: "#about"
+          - listitem [ref=e15]:
+            - link "FAQs" [ref=e16] [cursor=pointer]:
+              - /url: "#faq"
+        - link "Resume" [ref=e17] [cursor=pointer]:
+          - /url: /resume.pdf
+    - generic [ref=e18]:
+      - heading "Marco Suteja" [level=1] [ref=e19]
+      - paragraph [ref=e21]:
+        - text: A
+        - generic [ref=e22]: personal website
+        - text: and
+        - generic [ref=e23]: video
+        - text: presence — built by a
+        - generic [ref=e24]: full-stack developer
+        - text: who ships clean product.
+    - region "About me" [ref=e60]:
+      - paragraph [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: I
+          - generic [ref=e64]: "'"
+          - generic [ref=e65]: m
+        - generic [ref=e66]: a
+        - generic [ref=e68]:
+          - generic [ref=e69]: f
+          - generic [ref=e70]: u
+          - generic [ref=e71]: l
+          - generic [ref=e72]: l
+          - generic [ref=e73]: "-"
+          - generic [ref=e74]: s
+          - generic [ref=e75]: t
+          - generic [ref=e76]: a
+          - generic [ref=e77]: c
+          - generic [ref=e78]: k
+        - generic [ref=e79]:
+          - generic [ref=e80]: d
+          - generic [ref=e81]: e
+          - generic [ref=e82]: v
+          - generic [ref=e83]: e
+          - generic [ref=e84]: l
+          - generic [ref=e85]: o
+          - generic [ref=e86]: p
+          - generic [ref=e87]: e
+          - generic [ref=e88]: r
+        - generic [ref=e89]:
+          - generic [ref=e90]: w
+          - generic [ref=e91]: h
+          - generic [ref=e92]: o
+        - generic [ref=e93]:
+          - generic [ref=e94]: e
+          - generic [ref=e95]: "n"
+          - generic [ref=e96]: j
+          - generic [ref=e97]: o
+          - generic [ref=e98]: "y"
+          - generic [ref=e99]: s
+        - generic [ref=e100]:
+          - generic [ref=e101]: t
+          - generic [ref=e102]: u
+          - generic [ref=e103]: r
+          - generic [ref=e104]: "n"
+          - generic [ref=e105]: i
+          - generic [ref=e106]: "n"
+          - generic [ref=e107]: g
+        - generic [ref=e108]:
+          - generic [ref=e109]: i
+          - generic [ref=e110]: d
+          - generic [ref=e111]: e
+          - generic [ref=e112]: a
+          - generic [ref=e113]: s
+        - generic [ref=e114]:
+          - generic [ref=e115]: i
+          - generic [ref=e116]: "n"
+          - generic [ref=e117]: t
+          - generic [ref=e118]: o
+        - generic [ref=e119]:
+          - generic [ref=e120]: s
+          - generic [ref=e121]: i
+          - generic [ref=e122]: m
+          - generic [ref=e123]: p
+          - generic [ref=e124]: l
+          - generic [ref=e125]: e
+          - generic [ref=e126]: ","
+        - generic [ref=e127]:
+          - generic [ref=e128]: u
+          - generic [ref=e129]: s
+          - generic [ref=e130]: e
+          - generic [ref=e131]: f
+          - generic [ref=e132]: u
+          - generic [ref=e133]: l
+        - generic [ref=e134]:
+          - generic [ref=e135]: d
+          - generic [ref=e136]: i
+          - generic [ref=e137]: g
+          - generic [ref=e138]: i
+          - generic [ref=e139]: t
+          - generic [ref=e140]: a
+          - generic [ref=e141]: l
+        - generic [ref=e142]:
+          - generic [ref=e143]: p
+          - generic [ref=e144]: r
+          - generic [ref=e145]: o
+          - generic [ref=e146]: d
+          - generic [ref=e147]: u
+          - generic [ref=e148]: c
+          - generic [ref=e149]: t
+          - generic [ref=e150]: s
+          - generic [ref=e151]: .
+        - generic [ref=e152]: I
+        - generic [ref=e154]:
+          - generic [ref=e155]: c
+          - generic [ref=e156]: a
+          - generic [ref=e157]: r
+          - generic [ref=e158]: e
+        - generic [ref=e159]:
+          - generic [ref=e160]: a
+          - generic [ref=e161]: b
+          - generic [ref=e162]: o
+          - generic [ref=e163]: u
+          - generic [ref=e164]: t
+        - generic [ref=e165]:
+          - generic [ref=e166]: c
+          - generic [ref=e167]: l
+          - generic [ref=e168]: e
+          - generic [ref=e169]: a
+          - generic [ref=e170]: "n"
+        - generic [ref=e171]:
+          - generic [ref=e172]: d
+          - generic [ref=e173]: e
+          - generic [ref=e174]: s
+          - generic [ref=e175]: i
+          - generic [ref=e176]: g
+          - generic [ref=e177]: "n"
+          - generic [ref=e178]: ","
+        - generic [ref=e179]:
+          - generic [ref=e180]: t
+          - generic [ref=e181]: h
+          - generic [ref=e182]: o
+          - generic [ref=e183]: u
+          - generic [ref=e184]: g
+          - generic [ref=e185]: h
+          - generic [ref=e186]: t
+          - generic [ref=e187]: f
+          - generic [ref=e188]: u
+          - generic [ref=e189]: l
+        - generic [ref=e190]:
+          - generic [ref=e191]: e
+          - generic [ref=e192]: "n"
+          - generic [ref=e193]: g
+          - generic [ref=e194]: i
+          - generic [ref=e195]: "n"
+          - generic [ref=e196]: e
+          - generic [ref=e197]: e
+          - generic [ref=e198]: r
+          - generic [ref=e199]: i
+          - generic [ref=e200]: "n"
+          - generic [ref=e201]: g
+          - generic [ref=e202]: ","
+        - generic [ref=e203]:
+          - generic [ref=e204]: a
+          - generic [ref=e205]: "n"
+          - generic [ref=e206]: d
+        - generic [ref=e207]:
+          - generic [ref=e208]: b
+          - generic [ref=e209]: u
+          - generic [ref=e210]: i
+          - generic [ref=e211]: l
+          - generic [ref=e212]: d
+          - generic [ref=e213]: i
+          - generic [ref=e214]: "n"
+          - generic [ref=e215]: g
+        - generic [ref=e216]:
+          - generic [ref=e217]: t
+          - generic [ref=e218]: h
+          - generic [ref=e219]: i
+          - generic [ref=e220]: "n"
+          - generic [ref=e221]: g
+          - generic [ref=e222]: s
+        - generic [ref=e223]:
+          - generic [ref=e224]: p
+          - generic [ref=e225]: e
+          - generic [ref=e226]: o
+          - generic [ref=e227]: p
+          - generic [ref=e228]: l
+          - generic [ref=e229]: e
+        - generic [ref=e230]:
+          - generic [ref=e231]: e
+          - generic [ref=e232]: "n"
+          - generic [ref=e233]: j
+          - generic [ref=e234]: o
+          - generic [ref=e235]: "y"
+        - generic [ref=e236]:
+          - generic [ref=e237]: u
+          - generic [ref=e238]: s
+          - generic [ref=e239]: i
+          - generic [ref=e240]: "n"
+          - generic [ref=e241]: g
+          - generic [ref=e242]: .
+  - region "Projects" [ref=e243]:
+    - generic [ref=e244]:
+      - heading "Projects" [level=2] [ref=e245]
+      - button "Switch to list view" [ref=e246]: List view
+    - generic [ref=e249]:
+      - generic [ref=e251]:
+        - article [ref=e252]:
+          - button [ref=e253] [cursor=pointer]:
+            - generic [ref=e255]:
+              - heading "JobShield" [level=3] [ref=e256]
+              - generic [ref=e257]:
+                - paragraph [ref=e258]: "2026"
+                - paragraph [ref=e259]: ML Platform
+        - article [ref=e260]:
+          - button [ref=e261] [cursor=pointer]:
+            - generic [ref=e263]:
+              - heading "GitWrapped" [level=3] [ref=e264]
+              - generic [ref=e265]:
+                - paragraph [ref=e266]: "2026"
+                - paragraph [ref=e267]: Developer Tool
+        - article [ref=e268]:
+          - button "FOUR Clothing preview FOUR Clothing 2024 E-Commerce" [ref=e269] [cursor=pointer]:
+            - generic "FOUR Clothing preview" [ref=e271]
+            - generic [ref=e272]:
+              - heading "FOUR Clothing" [level=3] [ref=e273]
+              - generic [ref=e274]:
+                - paragraph [ref=e275]: "2024"
+                - paragraph [ref=e276]: E-Commerce
+      - generic [ref=e278]:
+        - article [ref=e279]:
+          - button [ref=e280] [cursor=pointer]:
+            - generic [ref=e282]:
+              - heading "BargAI" [level=3] [ref=e283]
+              - generic [ref=e284]:
+                - paragraph [ref=e285]: "2025"
+                - paragraph [ref=e286]: AI Assistant
+        - article [ref=e287]:
+          - button "Brain Tumor Segmentation Tool preview Brain Tumor Segmentation Tool 2024 Medical ML" [ref=e288] [cursor=pointer]:
+            - generic "Brain Tumor Segmentation Tool preview" [ref=e290]
+            - generic [ref=e291]:
+              - heading "Brain Tumor Segmentation Tool" [level=3] [ref=e292]
+              - generic [ref=e293]:
+                - paragraph [ref=e294]: "2024"
+                - paragraph [ref=e295]: Medical ML
+        - article [ref=e296]:
+          - button [ref=e297] [cursor=pointer]:
+            - generic [ref=e299]:
+              - heading "Multi-Agent Pathfinding for UAV Coordination" [level=3] [ref=e300]
+              - generic [ref=e301]:
+                - paragraph [ref=e302]: "2024"
+                - paragraph [ref=e303]: Robotics
+      - generic [ref=e305]:
+        - article [ref=e306]:
+          - button "Monkeypox / HFMD Image Classification preview Monkeypox / HFMD Image Classification 2023 Computer Vision" [ref=e307] [cursor=pointer]:
+            - generic "Monkeypox / HFMD Image Classification preview" [ref=e309]
+            - generic [ref=e310]:
+              - heading "Monkeypox / HFMD Image Classification" [level=3] [ref=e311]
+              - generic [ref=e312]:
+                - paragraph [ref=e313]: "2023"
+                - paragraph [ref=e314]: Computer Vision
+        - article [ref=e315]:
+          - button "SFU Blueprint Website Revamp preview SFU Blueprint Website Revamp 2024 Nonprofit" [ref=e316] [cursor=pointer]:
+            - generic "SFU Blueprint Website Revamp preview" [ref=e318]
+            - generic [ref=e319]:
+              - heading "SFU Blueprint Website Revamp" [level=3] [ref=e320]
+              - generic [ref=e321]:
+                - paragraph [ref=e322]: "2024"
+                - paragraph [ref=e323]: Nonprofit
+        - article [ref=e324]:
+          - button [ref=e325] [cursor=pointer]:
+            - generic [ref=e327]:
+              - heading "SpeakEasy" [level=3] [ref=e328]
+              - generic [ref=e329]:
+                - paragraph [ref=e330]: "2024"
+                - paragraph [ref=e331]: Real-Time ML
+      - generic [ref=e333]:
+        - article [ref=e334]:
+          - button [ref=e335] [cursor=pointer]:
+            - generic [ref=e337]:
+              - heading "Planner Buddy" [level=3] [ref=e338]
+              - generic [ref=e339]:
+                - paragraph [ref=e340]: "2024"
+                - paragraph [ref=e341]: Productivity
+        - article [ref=e342]:
+          - button [ref=e343] [cursor=pointer]:
+            - generic [ref=e345]:
+              - heading "Herd" [level=3] [ref=e346]
+              - generic [ref=e347]:
+                - paragraph [ref=e348]: "2025"
+                - paragraph [ref=e349]: Social Platform
+        - article [ref=e350]:
+          - button "CareConnect preview CareConnect 2023 Healthcare" [ref=e351] [cursor=pointer]:
+            - generic "CareConnect preview" [ref=e353]
+            - generic [ref=e354]:
+              - heading "CareConnect" [level=3] [ref=e355]
+              - generic [ref=e356]:
+                - paragraph [ref=e357]: "2023"
+                - paragraph [ref=e358]: Healthcare
+  - region "Experience" [ref=e359]:
+    - generic [ref=e360]:
+      - heading "Experience" [level=2] [ref=e361]
+      - generic [ref=e362]:
+        - generic [ref=e363]:
+          - button "01 Building in Teams" [ref=e364]:
+            - generic [ref=e365]: "01"
+            - generic [ref=e366]: Building in Teams
+            - generic [ref=e367]: +
+          - generic [ref=e368]:
+            - img "SFU Blueprint experience" [ref=e370]
+            - generic [ref=e371]:
+              - paragraph [ref=e372]: Blueprint
+              - paragraph [ref=e373]: Learned to create consistent, reusable interfaces within a collaborative development workflow.
+              - list [ref=e374]:
+                - listitem [ref=e375]:
+                  - generic [ref=e377]: Shipped production UI with shared design systems
+                - listitem [ref=e378]:
+                  - generic [ref=e380]: Improved consistency, responsiveness, and maintainability
+        - generic [ref=e381]:
+          - button "02 Owning Product Work" [ref=e382]:
+            - generic [ref=e383]: "02"
+            - generic [ref=e384]: Owning Product Work
+            - generic [ref=e385]: +
+          - generic [ref=e386]:
+            - img "Kosick ownership experience" [ref=e388]
+            - generic [ref=e389]:
+              - paragraph [ref=e390]: Kosick
+              - paragraph [ref=e391]: Turned business needs into working features across a real full-stack platform.
+              - list [ref=e392]:
+                - listitem [ref=e393]:
+                  - generic [ref=e395]: Built auth, dashboards, settings, and admin workflows
+                - listitem [ref=e396]:
+                  - generic [ref=e398]: Connected business needs to real product implementation
+        - generic [ref=e399]:
+          - button "03 Shipping Ideas" [ref=e400]:
+            - generic [ref=e401]: "03"
+            - generic [ref=e402]: Shipping Ideas
+            - generic [ref=e403]: +
+          - generic [ref=e404]:
+            - img "Projects experience" [ref=e406]
+            - generic [ref=e407]:
+              - paragraph [ref=e408]: Projects
+              - paragraph [ref=e409]: Built and launched projects across AI, web development, and product design.
+              - list [ref=e410]:
+                - listitem [ref=e411]:
+                  - generic [ref=e413]: Shipped AI, full-stack, and product experiments
+                - listitem [ref=e414]:
+                  - generic [ref=e416]: Learned to move fast from idea to polished release
+  - generic [ref=e419]:
+    - generic [ref=e421]:
+      - paragraph [ref=e422]: FAQs
+      - paragraph [ref=e423]: What you need to know before reaching out.
+    - generic [ref=e424]:
+      - generic [ref=e425]:
+        - button [ref=e426]:
+          - heading "What kind of roles are you looking for?" [level=3] [ref=e427]
+          - generic [ref=e428]: +
+        - paragraph [ref=e429]: Software engineering, ML engineering, or research-adjacent roles where I can build systems end-to-end, from model training to deployed product. Especially interested in applied ML, real-time systems, and full-stack product work.
+      - generic [ref=e430]:
+        - button [ref=e431]:
+          - heading "What's your strongest technical area?" [level=3] [ref=e432]
+          - generic [ref=e433]: +
+        - paragraph [ref=e434]: Building end-to-end systems that ship, from model training to FastAPI backend to React frontend. Most fluent in Python, TypeScript, and React.
+      - generic [ref=e435]:
+        - button [ref=e436]:
+          - heading "What's your stack?" [level=3] [ref=e437]
+          - generic [ref=e438]: +
+        - paragraph [ref=e439]: Python + PyTorch/TensorFlow for ML. React + TypeScript + Tailwind for frontend. FastAPI + Node.js for backend. PostgreSQL + Firebase + Convex for data. Docker + Vercel + Render for deployment.
+      - generic [ref=e440]:
+        - button [ref=e441]:
+          - heading "Are you available for full-time roles?" [level=3] [ref=e442]
+          - generic [ref=e443]: +
+        - paragraph [ref=e444]: Yes. Recent SFU Computer Science grad, actively looking. Open to relocating or remote.
+      - generic [ref=e445]:
+        - button [ref=e446]:
+          - heading "How do I reach you?" [level=3] [ref=e447]
+          - generic [ref=e448]: +
+        - paragraph [ref=e449]: LinkedIn is fastest. GitHub has all the code. Both are linked in the footer.
+  - region "Contact" [ref=e450]:
+    - generic [ref=e451]:
+      - generic [ref=e452]:
+        - heading "Start the Conversation" [level=2] [ref=e453]
+        - generic [ref=e454]:
+          - paragraph [ref=e455]: Full-stack software developer and SFU CS graduate building at the intersection of machine learning, real-time systems, and product engineering. If that's the kind of work you're looking for, we should meet.
+          - link "Get in touch" [ref=e456] [cursor=pointer]:
+            - /url: mailto:smarcoareliano@gmail.com
+          - generic [ref=e457]:
+            - navigation "Footer site" [ref=e458]:
+              - link "Projects" [ref=e459] [cursor=pointer]:
+                - /url: "#projects"
+              - link "Experience" [ref=e460] [cursor=pointer]:
+                - /url: "#experience"
+              - link "About" [ref=e461] [cursor=pointer]:
+                - /url: "#about"
+            - navigation "Footer social" [ref=e462]:
+              - link "LinkedIn" [ref=e463] [cursor=pointer]:
+                - /url: https://linkedin.com/in/marcosuteja
+              - link "GitHub" [ref=e464] [cursor=pointer]:
+                - /url: https://github.com/Bandoozle
+              - link "Email" [ref=e465] [cursor=pointer]:
+                - /url: mailto:smarcoareliano@gmail.com
+      - generic [ref=e466]:
+        - paragraph [ref=e467]: Marco Suteja
+        - paragraph [ref=e468]:
+          - text: Marco Suteja
+          - superscript [ref=e469]: ®

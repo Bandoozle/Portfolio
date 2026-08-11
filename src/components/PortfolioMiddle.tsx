@@ -1,930 +1,361 @@
 /**
- * PortfolioMiddle — main content sections below the hero through the footer.
- *
- * Fonts (Monolog-adjacent editorial system):
- *   Roboto Flex      →  section headings, project titles
- *   Satoshi         →  body copy, descriptions
- *   Instrument Serif italic → small labels, meta, section markers
- *
- * Backgrounds: clean paper tones, no texture.
+ * PortfolioMiddle — FAQ + Contact footer for the live portfolio.
  */
 
-import { motion, useInView, useMotionValue, useTransform, type MotionValue } from 'framer-motion'
-import { Github, Linkedin, Plus, type LucideIcon } from 'lucide-react'
-import { useEffect, useRef, useState, type RefObject } from 'react'
-import diagnoseImage from '../images/diagnose.jpg'
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
+import { Github, Linkedin, Mail, Plus } from 'lucide-react'
+import { useRef, useState } from 'react'
+import about1 from '../images/about1.jpeg'
+import about3 from '../images/about3.jpeg'
 import footerMarcoImage from '../images/footer_marco.jpg'
-import shipImage from '../images/ship.jpg'
-import solveImage from '../images/solve.jpg'
-import ProjectsGallerySection from './ProjectsGallerySection'
+import { cssInk } from '../theme/palette'
+import { FONT_BODY, FONT_DISPLAY } from '../theme/fonts'
+import ContactDraw from './ContactDraw'
+import Reveal, { RevealWords } from './Reveal'
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Font constants
-// ─────────────────────────────────────────────────────────────────────────────
+type FaqPart =
+  | { type: 'text'; value: string }
+  | { type: 'pill'; value: string; bg: string; border: string; ink: string }
 
-const FONT_DISPLAY = {
-  fontFamily: "'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif",
-  fontStyle: 'normal' as const,
-}
+const PILL = {
+  orange: { bg: '#FFE8DE', border: '#F5C4B0', ink: '#9A3D1C' },
+  blue: { bg: '#E8EEF8', border: '#B8C6E0', ink: '#2F4A7A' },
+  green: { bg: '#E7F3EA', border: '#B7D9C0', ink: '#2F6B3C' },
+  teal: { bg: '#EAF6FB', border: '#A9D2E4', ink: '#1F5F78' },
+  yellow: { bg: '#FFF3D6', border: '#E6C98A', ink: '#8A5A12' },
+  purple: { bg: '#F5EAF2', border: '#D9B8CF', ink: '#7A3D66' },
+} as const
 
-const FONT_BODY = {
-  fontFamily: "'Satoshi', 'Inter', 'Helvetica Neue', Arial, sans-serif",
-  fontStyle: 'normal' as const,
-}
+const pill = (value: string, tone: keyof typeof PILL): FaqPart => ({
+  type: 'pill',
+  value,
+  ...PILL[tone],
+})
 
-const FONT_PINK_AVERAGE = {
-  fontFamily: "'Pink Average', 'Instrument Serif', Georgia, serif",
-  fontStyle: 'normal' as const,
-}
+const text = (value: string): FaqPart => ({ type: 'text', value })
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. PROJECTS
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. WHAT I BUILD
-// ─────────────────────────────────────────────────────────────────────────────
-
-const COMPETENCY_GRADIENTS = [
-  'linear-gradient(90deg, #ff004c, #ff7a00)',
-  'linear-gradient(90deg, #ff7a00, #ffd400)',
-  'linear-gradient(90deg, #ffd400, #7cff00)',
-  'linear-gradient(90deg, #7cff00, #00ffd5)',
-  'linear-gradient(90deg, #00ffd5, #008cff)',
-  'linear-gradient(90deg, #7a00ff, #ff00d4)',
-] as const
-
-const competencies = [
+const faqs: { q: FaqPart[]; a: FaqPart[] }[] = [
   {
-    label: 'Machine Learning Systems',
-    caption: 'Model logic turned into shipped software — inference, evaluation, and product-facing ML.',
-    gradient: COMPETENCY_GRADIENTS[0],
-  },
-  {
-    label: 'Real-Time Applications',
-    caption: 'Interfaces where data updates instantly — live sync, low latency, clean state.',
-    gradient: COMPETENCY_GRADIENTS[1],
-  },
-  {
-    label: 'Full-Stack Web Apps',
-    caption: 'End-to-end web products — frontend, backend, database, auth, and deployment.',
-    gradient: COMPETENCY_GRADIENTS[2],
-  },
-  {
-    label: 'Computer Vision Tools',
-    caption: 'Images and video turned into predictions, measurements, and classifications.',
-    gradient: COMPETENCY_GRADIENTS[3],
-  },
-  {
-    label: 'Data Pipelines',
-    caption: 'Reliable flows for collecting, cleaning, validating, and moving data.',
-    gradient: COMPETENCY_GRADIENTS[4],
-  },
-  {
-    label: 'Research Prototypes',
-    caption: 'Technical ideas made testable fast — demos, POCs, and early product validation.',
-    gradient: COMPETENCY_GRADIENTS[5],
-  },
-] as const
-
-const useFinePointer = () => {
-  const [isFinePointer, setIsFinePointer] = useState(true)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
-    const update = () => setIsFinePointer(mq.matches)
-    update()
-    mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
-  }, [])
-
-  return isFinePointer
-}
-
-type CompetencyRowProps = {
-  item: (typeof competencies)[number]
-  index: number
-  sectionInView: boolean
-  isFinePointer: boolean
-  hoverIndex: number | null
-  setHoverIndex: (index: number | null) => void
-  setScrollIndex: (index: number) => void
-  scrollIndex: number | null
-}
-
-const CompetencyRow = ({
-  item,
-  index,
-  sectionInView,
-  isFinePointer,
-  hoverIndex,
-  setHoverIndex,
-  setScrollIndex,
-  scrollIndex,
-}: CompetencyRowProps) => {
-  const rowRef = useRef<HTMLLIElement>(null)
-  const rowCentered = useInView(rowRef, {
-    margin: '-42% 0px -42% 0px',
-    amount: 0,
-  })
-
-  useEffect(() => {
-    if (!isFinePointer && rowCentered) {
-      setScrollIndex(index)
-    }
-  }, [rowCentered, index, isFinePointer, setScrollIndex])
-
-  const isActive = isFinePointer ? hoverIndex === index : scrollIndex === index
-
-  return (
-    <li
-      ref={rowRef}
-      className="cursor-default"
-      onMouseEnter={isFinePointer ? () => setHoverIndex(index) : undefined}
-      onMouseLeave={isFinePointer ? () => setHoverIndex(null) : undefined}
-    >
-      <motion.span
-        className="block py-2 text-[clamp(2.35rem,11vw,7.5rem)] font-semibold leading-[0.94] tracking-[-0.01em] transition-colors duration-500 ease-out sm:text-[clamp(3rem,8.5vw,7.5rem)] md:py-2"
-        style={{
-          ...FONT_DISPLAY,
-          color: isActive ? '#E5E5E0' : 'rgba(229, 229, 224, 0.16)',
-        }}
-        initial={{ opacity: 0, y: 28 }}
-        animate={sectionInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.65, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {item.label}
-      </motion.span>
-    </li>
-  )
-}
-
-const WhatIBuildSection = () => {
-  const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once: true, margin: '-10%' })
-  const isFinePointer = useFinePointer()
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null)
-  const [scrollIndex, setScrollIndex] = useState<number | null>(null)
-
-  const activeIndex = isFinePointer ? hoverIndex : scrollIndex
-  const activeItem = activeIndex !== null ? competencies[activeIndex] : null
-
-  return (
-    <section ref={ref} id="competencies" className="bg-[#0B0B0A] py-[14vh] text-[#E5E5E0]">
-      <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
-        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-[minmax(240px,28%)_1fr] md:gap-16 lg:gap-24">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5 }}
-            className="flex w-full flex-col gap-8 md:sticky md:top-[14vh] md:ml-auto md:max-w-[320px]"
-          >
-            <div className="flex items-start justify-center gap-3 pt-2 md:justify-start">
-              <p
-                className="text-center text-[clamp(1rem,1.6vw,1.45rem)] font-semibold uppercase leading-[1.35] tracking-[0.18em] text-[#E5E5E0] md:text-left"
-                style={FONT_DISPLAY}
-              >
-                What I build
-              </p>
-            </div>
-
-            <motion.div
-              className="relative hidden aspect-[4/5] w-full overflow-hidden bg-[#191816] md:block"
-              animate={{
-                background: activeItem?.gradient ?? '#191816',
-              }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              aria-live="polite"
-              aria-label={activeItem ? `Description for ${activeItem.label}` : 'Competency description'}
-            >
-              <div className="absolute inset-0 flex flex-col justify-end p-5 uppercase sm:p-6 md:justify-between">
-                <div className="hidden items-center justify-between gap-4 md:flex">
-                  <p
-                    className="text-[0.72rem] font-bold leading-none tracking-[0.14em]"
-                    style={{
-                      ...FONT_DISPLAY,
-                      color: activeItem ? 'rgba(11, 11, 10, 0.62)' : 'rgba(229, 229, 224, 0.35)',
-                    }}
-                  >
-                    Selected focus
-                  </p>
-
-                  <p
-                    className="text-[0.72rem] font-bold leading-none"
-                    style={{
-                      ...FONT_DISPLAY,
-                      color: activeItem ? 'rgba(11, 11, 10, 0.62)' : 'rgba(229, 229, 224, 0.25)',
-                    }}
-                  >
-                    {activeIndex !== null ? String(activeIndex + 1).padStart(2, '0') : '00'}
-                  </p>
-                </div>
-
-                <p
-                  className="text-center text-[0.95rem] font-bold leading-[1.5] tracking-[0.02em] md:text-left"
-                  style={{
-                    ...FONT_DISPLAY,
-                    color: activeItem ? '#0B0B0A' : 'rgba(229, 229, 224, 0.52)',
-                  }}
-                >
-                  {activeItem?.caption ?? 'Select a skill to preview.'}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          <ul className="flex flex-col">
-            {competencies.map((item, i) => (
-              <CompetencyRow
-                key={item.label}
-                item={item}
-                index={i}
-                sectionInView={isInView}
-                isFinePointer={isFinePointer}
-                hoverIndex={hoverIndex}
-                setHoverIndex={setHoverIndex}
-                scrollIndex={scrollIndex}
-                setScrollIndex={setScrollIndex}
-              />
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. PROCESS
-// ─────────────────────────────────────────────────────────────────────────────
-
-const PROCESS_PANEL_TINTS = ['#191816', '#1c1b18', '#222220']
-
-const processCards = [
-  {
-    number: '01',
-    title: 'Diagnose',
-    description: 'Understand the problem before writing code.',
-    image: diagnoseImage,
-    bullets: [
-      'Map users, constraints, and success metrics.',
-      'Define what the system must do.',
-      'Agree on what "done" actually looks like.',
+    q: [text('What kind of '), pill('roles', 'purple'), text(' are you looking for?')],
+    a: [
+      text('Interested in '),
+      pill('software', 'orange'),
+      text(', '),
+      pill('ML', 'blue'),
+      text(', and '),
+      pill('research-adjacent', 'purple'),
+      text(' roles, especially '),
+      pill('applied ML', 'blue'),
+      text(', '),
+      pill('real-time', 'teal'),
+      text(' systems, and '),
+      pill('full-stack', 'orange'),
+      text(' product development.'),
     ],
   },
   {
-    number: '02',
-    title: 'Solve',
-    description: 'Design and build the system with intent.',
-    image: solveImage,
-    bullets: [
-      'Architect the solution and prototype fast.',
-      'Iterate on model quality, API design, or UX.',
-      'Lock in the core workflow before scaling.',
+    q: [text("What's your strongest "), pill('technical', 'blue'), text(' area?')],
+    a: [
+      text('Building '),
+      pill('end-to-end', 'green'),
+      text(' systems that ship, from '),
+      pill('model training', 'purple'),
+      text(' to '),
+      pill('FastAPI', 'yellow'),
+      text(' backend to '),
+      pill('React', 'teal'),
+      text(' frontend. Most fluent in '),
+      pill('Python', 'yellow'),
+      text(', '),
+      pill('TypeScript', 'blue'),
+      text(', and '),
+      pill('React', 'teal'),
+      text('.'),
     ],
   },
   {
-    number: '03',
-    title: 'Ship',
-    description: 'Deploy, measure, and improve in the real world.',
-    image: shipImage,
-    bullets: [
-      'Ship to production and monitor real usage.',
-      'Tighten performance and reliability.',
-      'Polish based on feedback — not assumptions.',
+    q: [text("What's your "), pill('stack', 'orange'), text('?')],
+    a: [
+      pill('Python', 'yellow'),
+      text(' + '),
+      pill('PyTorch', 'purple'),
+      text(' for '),
+      pill('ML', 'blue'),
+      text('. '),
+      pill('React', 'teal'),
+      text(' + '),
+      pill('TypeScript', 'blue'),
+      text(' for frontend. '),
+      pill('FastAPI', 'yellow'),
+      text(' + '),
+      pill('Node.js', 'green'),
+      text(' for backend. '),
+      pill('PostgreSQL', 'green'),
+      text(', '),
+      pill('Firebase', 'orange'),
+      text(', and '),
+      pill('Convex', 'teal'),
+      text(' for data. '),
+      pill('Docker', 'blue'),
+      text(' and '),
+      pill('Vercel', 'purple'),
+      text(' for deployment.'),
     ],
   },
-] as const
-
-const PROCESS_CARD_COUNT = processCards.length
-
-type CarouselLayout = {
-  activeX: number
-  activeY: number
-  cardWidth: number
-  cardHeight: number
-  gapX: number
-  gapY: number
-}
-
-const DEFAULT_CAROUSEL_LAYOUT: CarouselLayout = {
-  activeX: -120,
-  activeY: 28,
-  cardWidth: 520,
-  cardHeight: 430,
-  gapX: 620,
-  gapY: 118,
-}
-
-const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value))
-
-const getCarouselCardMotion = (index: number, progress: number, layout: CarouselLayout) => {
-  const activeStep = progress * (PROCESS_CARD_COUNT - 1)
-  const distanceFromActive = index - activeStep
-  const absDistance = Math.abs(distanceFromActive)
-
-  return {
-    x: layout.activeX + distanceFromActive * layout.gapX,
-    y: layout.activeY + distanceFromActive * layout.gapY + Math.min(absDistance, 1.5) * 26,
-    rotate: clamp(distanceFromActive / 2, -1, 1) * -4,
-    scale: 1 - Math.min(absDistance * 0.055, 0.14),
-    opacity: clamp(1 - Math.max(0, absDistance - 1.35) / 0.8),
-    zIndex: Math.round(100 - absDistance * 10),
-  }
-}
-
-const useProcessGalleryProgress = (sectionRef: RefObject<HTMLElement | null>) => {
-  const progress = useMotionValue(0)
-
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
-
-    let frame = 0
-
-    const update = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect()
-        const scrollable = Math.max(1, section.offsetHeight - window.innerHeight)
-        progress.set(clamp(-rect.top / scrollable))
-      })
-    }
-
-    const main = section.closest('main')
-
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update, { passive: true })
-    main?.addEventListener('scroll', update, { passive: true })
-    update()
-
-    return () => {
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-      main?.removeEventListener('scroll', update)
-    }
-  }, [sectionRef, progress])
-
-  return progress
-}
-
-const useProcessSectionHeight = (cardCount: number) => {
-  const [sectionExtra, setSectionExtra] = useState(0)
-
-  useEffect(() => {
-    const update = () => {
-      const scrollStep = Math.max(window.innerHeight * 0.95, 640)
-      setSectionExtra(Math.max(0, cardCount - 1) * scrollStep)
-    }
-
-    update()
-    window.addEventListener('resize', update, { passive: true })
-    return () => window.removeEventListener('resize', update)
-  }, [cardCount])
-
-  return sectionExtra
-}
-
-const useCarouselStageLayout = (stageRef: RefObject<HTMLDivElement | null>) => {
-  const [layout, setLayout] = useState<CarouselLayout>(DEFAULT_CAROUSEL_LAYOUT)
-  const layoutRef = useRef<CarouselLayout>(DEFAULT_CAROUSEL_LAYOUT)
-
-  useEffect(() => {
-    const update = () => {
-      const stage = stageRef.current
-      if (!stage) return
-
-      const { width: stageW, height: stageH } = stage.getBoundingClientRect()
-      if (stageW < 1 || stageH < 1) return
-
-      const isMobile = stageW < 768
-      const cardWidth = isMobile
-        ? Math.min(Math.max(stageW * 0.82, 280), 420)
-        : Math.min(Math.max(stageW * 0.34, 420), 640)
-      const cardHeight = isMobile ? cardWidth * 1.12 : cardWidth * 0.82
-
-      const next = {
-        activeX: isMobile ? 0 : -stageW * 0.08,
-        activeY: isMobile ? stageH * 0.13 : stageH * 0.05,
-        cardWidth,
-        cardHeight,
-        gapX: isMobile ? cardWidth * 1.02 : cardWidth * 1.18,
-        gapY: isMobile ? 46 : 112,
-      }
-
-      layoutRef.current = next
-      setLayout(next)
-    }
-
-    update()
-    window.addEventListener('resize', update, { passive: true })
-
-    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null
-    if (stageRef.current) observer?.observe(stageRef.current)
-
-    return () => {
-      window.removeEventListener('resize', update)
-      observer?.disconnect()
-    }
-  }, [stageRef])
-
-  return { layout, layoutRef }
-}
-
-const PROCESS_FLIP_EASE = [0.22, 1, 0.36, 1] as const
-
-const ProcessCarouselCard = ({
-  card,
-  index,
-  scrollProgress,
-  layoutRef,
-  layout,
-}: {
-  card: (typeof processCards)[number]
-  index: number
-  scrollProgress: MotionValue<number>
-  layoutRef: RefObject<CarouselLayout>
-  layout: CarouselLayout
-}) => {
-  const [flipped, setFlipped] = useState(false)
-
-  const x = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).x)
-  const y = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).y)
-  const rotate = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).rotate)
-  const scale = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).scale)
-  const opacity = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).opacity)
-  const zIndex = useTransform(scrollProgress, (p) => getCarouselCardMotion(index, p, layoutRef.current).zIndex)
-
-  const halfW = layout.cardWidth / 2
-  const halfH = layout.cardHeight / 2
-
-  return (
-    <motion.div
-      style={{
-        x,
-        y,
-        rotate,
-        scale,
-        opacity,
-        zIndex,
-        width: layout.cardWidth,
-        height: layout.cardHeight,
-        marginLeft: -halfW,
-        marginTop: -halfH,
-      }}
-      className="absolute left-1/2 top-1/2 will-change-transform"
-    >
-      <button
-        type="button"
-        onClick={() => setFlipped((current) => !current)}
-        aria-pressed={flipped}
-        aria-label={
-          flipped
-            ? `${card.title}: hide details`
-            : `${card.title}: reveal approach details`
-        }
-        className="group relative h-full w-full cursor-pointer overflow-hidden text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0B0B0A] max-md:ring-2 max-md:ring-[#E5E5E0]/35 max-md:ring-offset-2 max-md:ring-offset-[#E5E5E0]"
-      >
-        <div className="relative h-full w-full overflow-hidden shadow-[0_12px_40px_rgba(11,11,10,0.12)] transition-[box-shadow,transform] duration-300 group-hover:shadow-[0_28px_70px_rgba(11,11,10,0.24)] group-focus-visible:shadow-[0_28px_70px_rgba(11,11,10,0.24)] max-md:shadow-[0_18px_52px_rgba(11,11,10,0.22)]">
-          <div
-            className="relative h-full w-full overflow-hidden"
-            style={
-              card.image ? undefined : { backgroundColor: PROCESS_PANEL_TINTS[index % PROCESS_PANEL_TINTS.length] }
-            }
-          >
-            {card.image ? (
-              <img
-                src={card.image}
-                alt=""
-                className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out ${
-                  flipped ? 'scale-100' : 'group-hover:scale-[1.06] group-focus-visible:scale-[1.06]'
-                }`}
-                loading="lazy"
-              />
-            ) : null}
-
-            <motion.div
-              className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center"
-              initial={false}
-              animate={{ opacity: flipped ? 0 : 1 }}
-              transition={{ duration: 0.25, ease: PROCESS_FLIP_EASE }}
-            >
-              <span className="border border-[#E5E5E0]/70 bg-[#0B0B0A]/55 px-4 py-2 text-[0.62rem] font-semibold tracking-[0.1em] text-[#E5E5E0] opacity-100 backdrop-blur-sm transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100">
-                <span className="md:hidden">TAP TO REVEAL</span>
-                <span className="hidden md:inline">CLICK TO REVEAL</span>
-              </span>
-            </motion.div>
-
-            <motion.div
-              className="pointer-events-none absolute right-3 top-3 z-[3] md:hidden"
-              initial={false}
-              animate={{ opacity: flipped ? 0 : 1 }}
-              transition={{ duration: 0.25, ease: PROCESS_FLIP_EASE }}
-            >
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-[#E5E5E0]/80 bg-[#0B0B0A]/65 backdrop-blur-sm"
-                aria-hidden
-              >
-                <Plus className="h-4 w-4 text-[#E5E5E0]" strokeWidth={2.5} />
-              </span>
-            </motion.div>
-
-            <motion.div
-              className="absolute inset-x-0 bottom-0 z-[3] bg-gradient-to-t from-[#0B0B0A]/90 via-[#0B0B0A]/50 to-transparent p-5 md:p-6"
-              initial={false}
-              animate={{ opacity: flipped ? 0 : 1 }}
-              transition={{ duration: 0.35, ease: PROCESS_FLIP_EASE }}
-            >
-              <p
-                className="text-[0.62rem] font-medium uppercase tracking-[0.18em] text-[#E5E5E0]/55"
-                style={FONT_DISPLAY}
-              >
-                {card.number}
-              </p>
-              <p
-                className="mt-1 text-[clamp(1.35rem,2.8vw,2.25rem)] font-bold uppercase leading-[0.95] tracking-[-0.02em] text-[#E5E5E0]"
-                style={FONT_DISPLAY}
-              >
-                {card.title}
-              </p>
-            </motion.div>
-          </div>
-
-          <motion.div
-            className="pointer-events-none absolute inset-0 z-[4] bg-[#0B0B0A]"
-            initial={false}
-            animate={{ opacity: flipped ? 1 : 0 }}
-            transition={{ duration: 0.58, ease: PROCESS_FLIP_EASE }}
-            aria-hidden
-          />
-
-          <motion.div
-            className="pointer-events-none absolute inset-0 z-[5] flex flex-col p-4 text-[#E5E5E0] sm:p-5 md:p-6"
-            initial={false}
-            animate={{ opacity: flipped ? 1 : 0 }}
-            transition={{
-              duration: 0.42,
-              delay: flipped ? 0.28 : 0,
-              ease: PROCESS_FLIP_EASE,
-            }}
-          >
-            <motion.div
-              className="flex flex-1 flex-col justify-center"
-              initial={false}
-              animate={{ y: flipped ? 0 : 18, opacity: flipped ? 1 : 0 }}
-              transition={{
-                duration: 0.45,
-                delay: flipped ? 0.34 : 0,
-                ease: PROCESS_FLIP_EASE,
-              }}
-            >
-              <p
-                className="text-center text-[0.88rem] font-bold uppercase leading-[1.45] tracking-[0.05em] text-[#E5E5E0] sm:text-[1rem] md:text-[1.1rem]"
-                style={FONT_DISPLAY}
-              >
-                {card.description}
-              </p>
-              <ul className="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
-                {card.bullets.map((bullet) => (
-                  <li
-                    key={bullet}
-                    className="text-center text-[0.78rem] font-bold uppercase leading-[1.45] tracking-[0.04em] text-[#E5E5E0] sm:text-[0.92rem] md:text-[1rem]"
-                    style={FONT_DISPLAY}
-                  >
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-            <p
-              className="mt-auto w-full pt-6 text-center text-[0.78rem] font-bold uppercase tracking-[0.12em] text-[#E5E5E0] sm:text-[0.9rem]"
-              style={FONT_DISPLAY}
-            >
-              Click to hide
-            </p>
-          </motion.div>
-        </div>
-      </button>
-    </motion.div>
-  )
-}
-
-const APPROACH_LETTER_GAP = '0.05em'
-const APPROACH_LETTER_MASK_RIGHT = '0.08em'
-const APPROACH_HEADING_LINES = ['Project', 'Approach'] as const
-const APPROACH_HEADING_CHAR_COUNT = APPROACH_HEADING_LINES.reduce((sum, line) => sum + line.length, 0)
-
-const APPROACH_HEADING_SCROLL_VH = 0.32
-const APPROACH_HEADING_SCROLL_PORTION = 0.24
-
-const mapProcessScrollToCarouselProgress = (progress: number) => {
-  if (progress <= APPROACH_HEADING_SCROLL_PORTION) return 0
-  return clamp((progress - APPROACH_HEADING_SCROLL_PORTION) / (1 - APPROACH_HEADING_SCROLL_PORTION))
-}
-
-const clampProgress = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value))
-
-const ApproachSlotLetter = ({
-  char,
-  charIndex,
-  scrollProgress,
-  isLast,
-}: {
-  char: string
-  charIndex: number
-  scrollProgress: MotionValue<number>
-  isLast: boolean
-}) => {
-  const revealStart =
-    (charIndex / APPROACH_HEADING_CHAR_COUNT) * APPROACH_HEADING_SCROLL_PORTION * 0.78
-  const revealEnd = revealStart + APPROACH_HEADING_SCROLL_PORTION * 0.16
-
-  const y = useTransform(scrollProgress, (p) => {
-    if (p <= revealStart) return '120%'
-    if (p >= revealEnd) return '0%'
-
-    const t = (p - revealStart) / (revealEnd - revealStart)
-    const eased = 1 - (1 - t) ** 3
-
-    return `${120 - eased * 120}%`
-  })
-
-  const opacity = useTransform(scrollProgress, (p) => {
-    if (p <= revealStart) return 0
-    if (p >= revealStart + 0.025) return 1
-
-    return clampProgress((p - revealStart) / 0.025)
-  })
-
-  const isSpace = char === ' '
-
-  return (
-    <span
-      className="inline-block overflow-hidden align-top"
-      style={{
-        height: '1.05em',
-        width: isSpace ? '0.28em' : undefined,
-        paddingRight: isSpace ? undefined : APPROACH_LETTER_MASK_RIGHT,
-        marginRight: !isLast && !isSpace
-          ? `calc(${APPROACH_LETTER_GAP} - ${APPROACH_LETTER_MASK_RIGHT})`
-          : undefined,
-      }}
-    >
-      <motion.span className="block will-change-transform" style={{ y, opacity }}>
-        {char}
-      </motion.span>
-    </span>
-  )
-}
-
-const ApproachHeadingRow = ({
-  line,
-  lineIndex,
-  charOffset,
-  scrollProgress,
-}: {
-  line: string
-  lineIndex: number
-  charOffset: number
-  scrollProgress: MotionValue<number>
-}) => {
-  const chars = line.split('')
-
-  return (
-    <span className="block whitespace-nowrap uppercase">
-      {chars.map((char, i) => (
-        <ApproachSlotLetter
-          key={`${lineIndex}-${i}`}
-          char={char}
-          charIndex={charOffset + i}
-          scrollProgress={scrollProgress}
-          isLast={i === chars.length - 1}
-        />
-      ))}
-    </span>
-  )
-}
-
-const ProcessApproachHeading = ({ scrollProgress }: { scrollProgress: MotionValue<number> }) => (
-  <div className="pointer-events-none absolute inset-x-3 top-[13vh] z-[110] text-center sm:inset-x-auto sm:right-4 sm:top-[5vh] sm:text-right md:right-5 md:top-[6vh] lg:right-6">
-    <p
-      aria-label="Project Approach"
-      className="text-center text-[clamp(1.75rem,8.5vw,2.75rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-[#0B0B0A] sm:text-right sm:text-[clamp(2.25rem,7vw,4.5rem)]"
-      style={FONT_DISPLAY}
-    >
-      {APPROACH_HEADING_LINES.map((line, i) => (
-        <ApproachHeadingRow
-          key={line}
-          line={line}
-          lineIndex={i}
-          charOffset={APPROACH_HEADING_LINES.slice(0, i).reduce((sum, entry) => sum + entry.length, 0)}
-          scrollProgress={scrollProgress}
-        />
-      ))}
-    </p>
-  </div>
-)
-
-const ProcessSection = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const stageRef = useRef<HTMLDivElement>(null)
-  const scrollProgress = useProcessGalleryProgress(sectionRef)
-  const carouselScrollProgress = useTransform(scrollProgress, mapProcessScrollToCarouselProgress)
-  const sectionExtra = useProcessSectionHeight(processCards.length)
-  const [headingScrollExtra, setHeadingScrollExtra] = useState(0)
-  const { layout, layoutRef } = useCarouselStageLayout(stageRef)
-
-  useEffect(() => {
-    const update = () => setHeadingScrollExtra(window.innerHeight * APPROACH_HEADING_SCROLL_VH)
-    update()
-    window.addEventListener('resize', update, { passive: true })
-    return () => window.removeEventListener('resize', update)
-  }, [])
-
-  return (
-    <section
-      ref={sectionRef}
-      className="relative bg-[#E5E5E0] text-[#0B0B0A]"
-      id="process"
-      style={{ minHeight: `calc(100vh + ${headingScrollExtra + sectionExtra}px)` }}
-    >
-      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
-        <ProcessApproachHeading scrollProgress={scrollProgress} />
-
-        <div ref={stageRef} className="relative h-full w-full">
-          {processCards.map((card, i) => (
-            <ProcessCarouselCard
-              key={card.number}
-              card={card}
-              index={i}
-              scrollProgress={carouselScrollProgress}
-              layoutRef={layoutRef}
-              layout={layout}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 7. FAQ
-// ─────────────────────────────────────────────────────────────────────────────
-
-const faqs = [
   {
-    q: 'What kind of roles are you looking for?',
-    a: "Software engineering, ML engineering, or research-adjacent roles where I can build systems end-to-end, from model training to deployed product. Especially interested in applied ML, real-time systems, and full-stack product work.",
+    q: [text('Are you available for '), pill('full-time', 'green'), text(' roles?')],
+    a: [
+      text('Yes. Recent '),
+      pill('SFU', 'blue'),
+      text(' '),
+      pill('Computer Science', 'purple'),
+      text(' grad, actively looking. Open to '),
+      pill('relocating', 'orange'),
+      text(' or '),
+      pill('remote', 'teal'),
+      text('.'),
+    ],
   },
   {
-    q: "What's your strongest technical area?",
-    a: 'Building end-to-end systems that ship, from model training to FastAPI backend to React frontend. Most fluent in Python, TypeScript, and React.',
-  },
-  {
-    q: "What's your stack?",
-    a: 'Python + PyTorch/TensorFlow for ML. React + TypeScript + Tailwind for frontend. FastAPI + Node.js for backend. PostgreSQL + Firebase + Convex for data. Docker + Vercel + Render for deployment.',
-  },
-  {
-    q: 'Are you available for full-time roles?',
-    a: 'Yes. Recent SFU Computer Science grad, actively looking. Open to relocating or remote.',
-  },
-  {
-    q: 'How do I reach you?',
-    a: 'LinkedIn is fastest. GitHub has all the code. Both are linked in the footer.',
+    q: [text('How do I '), pill('reach', 'purple'), text(' you?')],
+    a: [
+      pill('LinkedIn', 'blue'),
+      text(' is fastest. '),
+      pill('GitHub', 'orange'),
+      text(' has all the code. Both are linked in the footer.'),
+    ],
   },
 ]
 
-const BookCallButton = () => (
-  <a
-    href="https://linkedin.com/in/marcosuteja"
-    target="_blank"
-    rel="noreferrer"
-    className="group inline-flex w-fit items-center gap-2 rounded-[4px] bg-[#E5E5E0] py-1.5 pl-3 pr-1.5 text-[0.82rem] font-semibold text-[#0B0B0A] transition-colors duration-200 hover:bg-[#d8d8d3]"
-    style={FONT_DISPLAY}
-  >
-    <span>Book a call with Marco</span>
-
-    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[3px] bg-[#0B0B0A] text-[#E5E5E0] transition-colors duration-200 group-hover:bg-[#222220]">
-      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
-        <path
-          d="M4.5 11.5L11.5 4.5M11.5 4.5H6.25M11.5 4.5V9.75"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
-  </a>
+const FaqRichText = ({ parts }: { parts: FaqPart[] }) => (
+  <>
+    {parts.map((part, i) =>
+      part.type === 'pill' ? (
+        <span
+          key={`${part.value}-${i}`}
+          className="mx-[0.06em] inline-flex translate-y-[-0.04em] items-center rounded-full px-[0.45em] py-[0.1em] text-[0.92em] leading-none"
+          style={{
+            backgroundColor: part.bg,
+            border: `1px solid ${part.border}`,
+            color: part.ink,
+          }}
+        >
+          {part.value}
+        </span>
+      ) : (
+        <span key={`t-${i}`}>{part.value}</span>
+      ),
+    )}
+  </>
 )
 
-const FaqContactCard = () => (
-  <div
-    className="flex w-full max-w-fit flex-col items-end border-t border-solid pt-6 text-right md:pt-8"
-    style={{ borderColor: 'rgba(229, 229, 224, 0.08)' }}
-  >
-    <p className="text-[0.9rem] leading-snug text-[#E5E5E0]/55" style={FONT_BODY}>
-      Got more questions?
-    </p>
+const faqTopics = [
+  { label: 'Roles?', shape: 'pill' as const, ...PILL.purple },
+  { label: 'Stack?', shape: 'soft' as const, ...PILL.orange },
+  { label: 'Availability?', shape: 'pill' as const, ...PILL.green },
+  { label: 'Strengths?', shape: 'square' as const, ...PILL.blue },
+  { label: 'Contact?', shape: 'pill' as const, ...PILL.teal },
+]
 
-    <p className="mt-1 text-[1.05rem] font-semibold leading-snug text-[#E5E5E0]" style={FONT_DISPLAY}>
-      Chat with Marco.
-    </p>
-  </div>
+const faqTopicLayout = [
+  { rotate: '-8deg', y: '0.35rem' },
+  { rotate: '4deg', y: '-0.55rem' },
+  { rotate: '-3deg', y: '0.15rem' },
+  { rotate: '7deg', y: '-0.35rem' },
+  { rotate: '-5deg', y: '0.45rem' },
+] as const
+
+const FaqTopicChip = ({
+  label,
+  shape,
+  bg,
+  border,
+  ink,
+  rotate,
+  y,
+  delay,
+  active,
+}: {
+  label: string
+  shape: 'pill' | 'soft' | 'square'
+  bg: string
+  border: string
+  ink: string
+  rotate: string
+  y: string
+  delay: number
+  active: boolean
+}) => (
+  <span style={{ transform: `rotate(${rotate}) translateY(${y})` }}>
+    <motion.span
+      initial={{ opacity: 0, y: 12, scale: 0.92 }}
+      animate={active ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap px-[0.95em] py-[0.5em] text-[clamp(0.95rem,3.8vw,2.35rem)] font-normal leading-none tracking-[-0.025em] sm:px-[1.2em] sm:py-[0.64em] ${
+        shape === 'pill' ? 'rounded-full' : shape === 'soft' ? 'rounded-[1.25rem]' : 'rounded-[0.5rem]'
+      }`}
+      style={{
+        ...FONT_DISPLAY,
+        backgroundColor: bg,
+        border: `2px solid ${border}`,
+        color: ink,
+      }}
+    >
+      {label}
+    </motion.span>
+  </span>
 )
 
 const FaqSection = () => {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-10%' })
-  const [open, setOpen] = useState<number | null>(null)
-  const [hoveredFaq, setHoveredFaq] = useState<number | null>(null)
+  const reduceMotion = useReducedMotion()
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section ref={ref} className="bg-[#191816] py-[10vh] text-[#E5E5E0] md:py-[12vh]" id="faq">
-      <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
-        <div className="grid grid-cols-1 gap-14 md:grid-cols-[minmax(260px,28%)_1fr] md:items-stretch md:gap-16 lg:gap-24">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col"
+    <section
+      ref={ref}
+      className="flex min-h-0 flex-col justify-start pt-[clamp(3rem,7vw,6rem)] pb-[clamp(1.5rem,4vw,3rem)] md:min-h-[100dvh]"
+      style={{ color: cssInk }}
+      id="faq"
+      aria-label="Questions"
+    >
+      <div className="mx-auto mb-8 w-full px-3 text-center sm:mb-12 sm:px-4 md:mb-16 md:px-5 lg:px-6">
+        <motion.h2
+          initial={reduceMotion ? false : { opacity: 0, y: 22, filter: 'blur(8px)' }}
+          animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full text-[clamp(3rem,14vw,min(11rem,20svh))] font-normal leading-[0.88] tracking-[-0.045em]"
+          style={{ ...FONT_DISPLAY, color: cssInk }}
+        >
+          Questions?
+        </motion.h2>
+        <motion.p
+          initial={reduceMotion ? false : { opacity: 0, y: 18, filter: 'blur(6px)' }}
+          animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+          transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mt-6 text-[clamp(1rem,3.6vw,1.55rem)] leading-[1.5] sm:mt-10 md:mt-12"
+          style={{ ...FONT_DISPLAY, color: 'var(--site-muted)' }}
+        >
+          Find your answers here.
+        </motion.p>
+      </div>
+
+      <div className="mx-auto w-full max-w-[min(98vw,92rem)] overflow-visible px-2 sm:px-3 md:px-4 lg:px-5">
+        <div className="relative overflow-visible">
+          <div
+            className="pointer-events-none absolute inset-x-0 top-[3.5%] z-20 hidden -translate-y-1/2 flex-wrap items-center justify-center gap-x-2 gap-y-2 px-3 sm:inset-x-[-2%] sm:top-[4%] sm:flex sm:flex-nowrap sm:gap-x-3.5 sm:px-0 md:top-[4.5%] md:gap-x-4"
+            aria-hidden
           >
-            <div>
-              <p
-                className="text-[clamp(3.25rem,8vw,6rem)] font-bold uppercase leading-[0.9] tracking-[-0.03em] text-[#E5E5E0]"
-                style={FONT_DISPLAY}
-              >
-                FAQs
-              </p>
-              <p
-                className="mt-4 max-w-[24ch] text-[clamp(1.05rem,1.9vw,1.4rem)] leading-[1.45] text-[#E5E5E0]/65"
-                style={FONT_BODY}
-              >
-                What you need to know before reaching out.
-              </p>
-            </div>
-          </motion.div>
+            {faqTopics.map((topic, i) => (
+              <FaqTopicChip
+                key={topic.label}
+                {...topic}
+                {...faqTopicLayout[i]}
+                delay={0.14 + i * 0.06}
+                active={isInView}
+              />
+            ))}
+          </div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative z-10 flex w-full items-center justify-center overflow-hidden rounded-[1.75rem] bg-[var(--site-surface)] md:aspect-square md:rounded-full"
           >
-            {faqs.map((item, i) => {
-              const isHighlighted = hoveredFaq === i || open === i
+            <div className="flex w-full max-w-[52rem] flex-col items-center px-4 pt-[clamp(2rem,6vw,8.5rem)] pb-[clamp(2.5rem,6vw,5rem)] sm:w-[68%] sm:px-0 md:pt-[clamp(5.5rem,12vw,8.5rem)]">
+              {faqs.map((item, i) => {
+                const isOpen = openIndex === i
 
-              return (
-                <div
-                  key={i}
-                  className="border-b border-solid transition-colors duration-300 first:border-t hover:bg-[#E5E5E0]/[0.03]"
-                  style={{ borderColor: 'rgba(229, 229, 224, 0.08)' }}
-                  onMouseEnter={() => setHoveredFaq(i)}
-                  onMouseLeave={() => setHoveredFaq(null)}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpen(open === i ? null : i)}
-                    className="flex w-full items-center justify-between gap-3 px-1 py-5 text-left sm:py-6 md:py-8"
+                return (
+                  <Reveal
+                    key={i}
+                    delay={0.08 + i * 0.1}
+                    y={18}
+                    className={`w-full ${i > 0 ? 'border-t-2 border-solid border-[var(--site-ink)]/15' : ''}`}
                   >
-                    <h3
-                      className="min-w-0 pr-2 text-[clamp(1.45rem,6.5vw,3.5rem)] font-normal leading-[0.94] tracking-[0.01em] transition-colors duration-300"
-                      style={{
-                        ...FONT_PINK_AVERAGE,
-                        color: isHighlighted ? '#E5E5E0' : 'rgba(229, 229, 224, 0.28)',
-                      }}
-                    >
-                      {item.q}
-                    </h3>
-                    <span
-                      className="ml-2 shrink-0 text-[clamp(1.75rem,5vw,3rem)] font-normal leading-none transition-all duration-300 sm:ml-6"
-                      style={{
-                        ...FONT_PINK_AVERAGE,
-                        transform:
-                          open === i
-                            ? 'rotate(45deg) scale(1.08)'
-                            : hoveredFaq === i
-                              ? 'scale(1.08)'
-                              : 'scale(1)',
-                        color: isHighlighted ? '#E5E5E0' : 'rgba(229, 229, 224, 0.28)',
-                      }}
-                      aria-hidden
-                    >
-                      +
-                    </span>
-                  </button>
+                    {/* Mobile accordion */}
+                    <div className="md:hidden">
+                      <button
+                        type="button"
+                        className="flex w-full items-start justify-between gap-3 py-4 text-left"
+                        aria-expanded={isOpen}
+                        onClick={() => setOpenIndex(isOpen ? null : i)}
+                      >
+                        <h3
+                          className="min-w-0 flex-1 text-[clamp(1.15rem,4.2vw,1.45rem)] font-normal leading-[1.25] tracking-[-0.03em] text-balance"
+                          style={{ ...FONT_DISPLAY, color: cssInk }}
+                        >
+                          <FaqRichText parts={item.q} />
+                        </h3>
+                        <span
+                          className={`mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--site-ink)]/20 transition-transform duration-200 ${
+                            isOpen ? 'rotate-45' : ''
+                          }`}
+                          aria-hidden
+                        >
+                          <Plus className="h-4 w-4" strokeWidth={2} />
+                        </span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {isOpen ? (
+                          <motion.div
+                            key="answer"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <p
+                              className="pb-4 pr-10 text-[clamp(0.95rem,3.5vw,1.15rem)] font-normal leading-[1.5] tracking-[-0.015em] text-pretty"
+                              style={{
+                                ...FONT_DISPLAY,
+                                color: 'color-mix(in srgb, var(--site-ink) 72%, transparent)',
+                              }}
+                            >
+                              <FaqRichText parts={item.a} />
+                            </p>
+                          </motion.div>
+                        ) : null}
+                      </AnimatePresence>
+                    </div>
 
-                  <div className={`faq-content ${open === i ? 'open' : ''}`}>
-                    <div className="overflow-hidden px-1">
-                      <p className="pb-7 text-[0.95rem] leading-[1.75] text-[#E5E5E0]/55 md:pb-8" style={FONT_BODY}>
-                        {item.a}
+                    {/* Desktop two-column */}
+                    <div className="hidden grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start gap-x-14 py-7 md:grid">
+                      <h3
+                        className="-mr-8 ml-auto w-full max-w-[19ch] text-left text-[clamp(1.55rem,3.2vw,2.25rem)] font-normal leading-[1.18] tracking-[-0.035em] text-balance"
+                        style={{ ...FONT_DISPLAY, color: cssInk }}
+                      >
+                        <FaqRichText parts={item.q} />
+                      </h3>
+                      <p
+                        className="-ml-2 max-w-[28ch] text-left text-[clamp(1.12rem,1.95vw,1.4rem)] font-normal leading-[1.5] tracking-[-0.015em] text-pretty"
+                        style={{
+                          ...FONT_DISPLAY,
+                          color: 'color-mix(in srgb, var(--site-ink) 72%, transparent)',
+                        }}
+                      >
+                        <FaqRichText parts={item.a} />
                       </p>
                     </div>
-                  </div>
-                </div>
-              )
-            })}
+                  </Reveal>
+                )
+              })}
+
+              <Reveal delay={0.08 + faqs.length * 0.1} y={16}>
+                <a
+                  href="https://linkedin.com/in/marcosuteja"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex items-center rounded-full bg-[#6840FF] px-[1.2em] py-[0.7em] text-center text-[clamp(1.15rem,4.2vw,1.45rem)] font-normal leading-none tracking-[-0.03em] text-[#F4F4F4] transition-opacity duration-200 hover:opacity-85 sm:mt-8 sm:px-[1.35em] md:text-[clamp(1.55rem,3.2vw,2.25rem)]"
+                  style={FONT_DISPLAY}
+                >
+                  More questions? Book a call
+                </a>
+              </Reveal>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -933,141 +364,174 @@ const FaqSection = () => {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 8. CTA / FOOTER
+// 8. CTA / FOOTER — image square + contacts square (experience-style pair)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const FOOTER_LINE = 'rgba(229, 229, 224, 0.18)'
+const CONTACT_TEXT = '#201D1D'
+const CONTACT_DIM = '#8a8787'
+const CONTACT_LINE = '1.25em'
 
-const footerNavLinks = [
-  { label: 'Projects', href: '#projects', external: false },
-  { label: 'Approach', href: '#process', external: false },
-  { label: 'FAQ', href: '#faq', external: false },
+const footerContacts = [
   {
+    id: 'linkedin',
     label: 'LinkedIn',
     href: 'https://linkedin.com/in/marcosuteja',
-    external: true,
+    image: footerMarcoImage,
     Icon: Linkedin,
+    blurb:
+      'You can reach me on LinkedIn for work, collaboration, or just to say hello. I am always open to connecting.',
   },
   {
+    id: 'github',
     label: 'GitHub',
     href: 'https://github.com/Bandoozle',
-    external: true,
+    image: about1,
     Icon: Github,
+    blurb:
+      'GitHub is where my repositories live. Browse the projects I build, ship, and keep improving over time.',
   },
-  { label: 'Contact', href: 'mailto:smarcoareliano@gmail.com', external: false },
+  {
+    id: 'email',
+    label: 'Email',
+    href: 'mailto:smarcoareliano@gmail.com',
+    image: about3,
+    Icon: Mail,
+    blurb:
+      'Prefer a direct message? Email is the best way to reach me for questions, ideas, or opportunities.',
+  },
 ] as const
-
-const FooterNavRow = ({
-  label,
-  href,
-  external,
-  index,
-  isInView,
-  Icon,
-}: {
-  label: string
-  href: string
-  external: boolean
-  index: number
-  isInView: boolean
-  Icon?: LucideIcon
-}) => {
-  const [hovered, setHovered] = useState(false)
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: 0.08 + index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      className="border-b border-solid"
-      style={{ borderColor: FOOTER_LINE }}
-    >
-      <motion.a
-        href={href}
-        target={external ? '_blank' : undefined}
-        rel={external ? 'noreferrer' : undefined}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        animate={{ x: hovered ? 16 : 0 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="group flex items-center justify-between gap-4 py-2.5 md:py-3"
-      >
-        <span
-          className="text-[clamp(1.35rem,3.5vw,2.5rem)] font-bold uppercase leading-[0.94] tracking-[-0.02em] transition-colors duration-300"
-          style={{
-            ...FONT_DISPLAY,
-            color: hovered ? '#E5E5E0' : 'rgba(229, 229, 224, 0.88)',
-          }}
-        >
-          {label}
-        </span>
-
-        {Icon ? (
-          <Icon
-            className="h-4 w-4 shrink-0 text-[#E5E5E0]/45 transition-colors duration-300 group-hover:text-[#E5E5E0]/80 md:h-5 md:w-5"
-            strokeWidth={1.5}
-            aria-hidden
-          />
-        ) : null}
-      </motion.a>
-    </motion.div>
-  )
-}
 
 const CtaSection = () => {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-10%' })
+  const reduceMotion = useReducedMotion()
+  const [active, setActive] = useState(0)
+  const activeContact = footerContacts[active] ?? footerContacts[0]
 
   return (
-    <section ref={ref} id="contact" className="bg-[#0B0B0A] py-[6vh] text-[#E5E5E0] md:py-[8vh]">
-      <div className="mx-auto w-full px-3 sm:px-4 md:px-5 lg:px-6">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-8 lg:gap-10">
-          <nav aria-label="Footer navigation">
-            {footerNavLinks.map((link, i) => (
-              <FooterNavRow key={link.label} {...link} index={i} isInView={isInView} />
-            ))}
-          </nav>
+    <section
+      ref={ref}
+      id="contact"
+      className="relative flex min-h-0 flex-col justify-center overflow-x-clip overflow-y-visible pt-[clamp(4.5rem,10vw,7rem)] pb-[clamp(1.5rem,4vw,2.75rem)]"
+      style={{ color: cssInk, backgroundColor: 'var(--site-bg)' }}
+      aria-labelledby="contact-heading"
+    >
+      <div className="relative w-full overflow-visible">
+        <ContactDraw />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="flex flex-col gap-8 md:gap-10">
-              <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between md:gap-10 lg:gap-14">
-                <p
-                  className="max-w-[34ch] text-left text-[clamp(0.95rem,2.1vw,1.25rem)] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#E5E5E0]/88"
-                  style={FONT_DISPLAY}
-                >
-                  Full-stack software developer and Simon Fraser University CS graduate building at the
-                  intersection of machine learning, real-time systems, and product engineering.
-                </p>
-
-                <div className="flex flex-col items-start gap-6 sm:items-end sm:gap-8">
-                  <img
-                    src={footerMarcoImage}
-                    alt="Marco Suteja"
-                    className="h-24 w-auto max-w-full shrink-0 object-contain object-left sm:h-32 sm:object-right md:h-40 lg:h-48"
-                  />
-
-                  <FaqContactCard />
-                </div>
-              </div>
-
-              <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                <a
-                  href="?layer=retro-embed"
-                  className="hidden text-[clamp(0.95rem,2.1vw,1.25rem)] font-bold uppercase leading-[1.2] tracking-[0.02em] text-[#E5E5E0]/55 transition-colors duration-300 hover:text-[#E5E5E0] md:inline"
-                  style={FONT_DISPLAY}
-                >
-                  get to know marco more
-                </a>
-
-                <BookCallButton />
-              </div>
-            </div>
-          </motion.div>
+        <div className="relative z-[1] mx-auto mb-10 w-full px-3 text-center sm:mb-12 sm:px-4 md:mb-14 md:px-5 lg:mb-16 lg:px-6">
+          <RevealWords
+            id="contact-heading"
+            text="Contact"
+            className="w-full text-[clamp(3rem,14vw,min(11rem,20svh))] font-normal leading-[0.88] tracking-[-0.045em]"
+            style={{ ...FONT_DISPLAY, color: cssInk }}
+          />
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-[1] mx-auto grid w-full max-w-[min(82rem,96vw)] grid-cols-1 items-stretch gap-5 px-3 sm:gap-6 sm:px-4 md:grid-cols-[minmax(16rem,0.9fr)_minmax(14rem,0.7fr)_minmax(22rem,1.4fr)] md:gap-6 md:px-5 lg:gap-7 lg:px-6"
+        >
+        <div className="relative mx-auto aspect-square w-full max-w-[22rem] overflow-hidden rounded-full bg-[#2a2727] sm:max-w-[26rem] md:mx-0 md:max-w-none">
+          <img
+            src={activeContact.image}
+            alt="Marco Suteja"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div className="mt-3 flex w-full items-center justify-center self-stretch rounded-full bg-[var(--site-surface)] px-8 py-4 sm:mt-4 md:mt-0 md:h-full md:min-h-0 md:px-[clamp(1.5rem,4vw,2.75rem)] md:py-[clamp(1.5rem,4vw,2.75rem)]">
+          <nav
+            className="flex w-full flex-row items-center justify-center gap-8 md:flex-col md:gap-[clamp(1rem,2.8vw,1.65rem)]"
+            aria-label="Contact links"
+          >
+            {footerContacts.map((link, i) => {
+              const isActive = active === i
+              const color = isActive ? CONTACT_TEXT : CONTACT_DIM
+              const external = !link.href.startsWith('mailto:')
+              const Icon = link.Icon
+
+              return (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  target={external ? '_blank' : undefined}
+                  rel={external ? 'noreferrer' : undefined}
+                  aria-label={link.label}
+                  className="cursor-pointer text-center text-[clamp(1.65rem,4.2vw,2.85rem)] font-normal tracking-[-0.04em]"
+                  style={FONT_DISPLAY}
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  onClick={() => setActive(i)}
+                >
+                  <span className="md:hidden" style={{ color, transition: 'color 0.2s ease' }}>
+                    <Icon className="h-8 w-8" strokeWidth={1.75} aria-hidden />
+                  </span>
+
+                  <span
+                    className="hidden overflow-hidden align-top md:inline-block"
+                    style={{ height: CONTACT_LINE }}
+                  >
+                    <span
+                      className="flex flex-col will-change-transform"
+                      style={{
+                        transform: isActive ? `translateY(-${CONTACT_LINE})` : 'translateY(0)',
+                        transition: reduceMotion
+                          ? 'none'
+                          : 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+                      }}
+                    >
+                      <span
+                        className="block leading-none whitespace-nowrap"
+                        style={{
+                          height: CONTACT_LINE,
+                          lineHeight: CONTACT_LINE,
+                          color,
+                          transition: 'color 0.2s ease',
+                        }}
+                      >
+                        {link.label}
+                      </span>
+                      <span
+                        aria-hidden
+                        className="block leading-none whitespace-nowrap"
+                        style={{
+                          height: CONTACT_LINE,
+                          lineHeight: CONTACT_LINE,
+                          color,
+                          transition: 'color 0.2s ease',
+                        }}
+                      >
+                        {link.label}
+                      </span>
+                    </span>
+                  </span>
+                </a>
+              )
+            })}
+          </nav>
+        </div>
+
+        <div className="flex min-h-[14rem] w-full flex-col items-center justify-center self-stretch rounded-[1.75rem] bg-[#2E2B2B] px-[clamp(3.25rem,9vw,6rem)] py-[clamp(2.75rem,7vw,4.5rem)] md:h-full md:min-h-0 md:rounded-full">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.p
+              key={activeContact.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 14, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -8, filter: 'blur(4px)' }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="max-w-[28ch] text-center text-[clamp(1.25rem,3.2vw,1.85rem)] leading-[1.4] tracking-[-0.02em] text-[#F4F4F4]"
+              style={FONT_BODY}
+            >
+              {activeContact.blurb}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+        </motion.div>
       </div>
     </section>
   )
@@ -1079,12 +543,10 @@ const CtaSection = () => {
 
 const PortfolioMiddle = () => (
   <>
-    <ProjectsGallerySection />
-    <WhatIBuildSection />
-    <ProcessSection />
     <FaqSection />
     <CtaSection />
   </>
 )
 
+export { FaqSection, CtaSection }
 export default PortfolioMiddle

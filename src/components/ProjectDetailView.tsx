@@ -1,17 +1,10 @@
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { PortfolioProject } from '../data/portfolioProjects'
 import ProjectTechStack from './ProjectTechStack'
 
-const FONT_DISPLAY = {
-  fontFamily: "'Roboto Flex', 'Inter', 'Helvetica Neue', Arial, sans-serif",
-  fontStyle: 'normal' as const,
-}
-
-const FONT_BODY = {
-  fontFamily: "'Satoshi', 'Inter', 'Helvetica Neue', Arial, sans-serif",
-  fontStyle: 'normal' as const,
-}
+import { FONT_BODY, FONT_DISPLAY } from '../theme/fonts'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -26,26 +19,41 @@ const ProjectDetailView = ({ project, onClose }: ProjectDetailViewProps) => {
       if (event.key === 'Escape') onClose()
     }
 
-    const main = document.querySelector('main')
-    const prevOverflow = main?.style.overflow ?? ''
-    if (main) main.style.overflow = 'hidden'
+    const locked: { el: HTMLElement; overflowY: string; overflow: string }[] = []
+    const lock = (el: HTMLElement | null) => {
+      if (!el) return
+      locked.push({
+        el,
+        overflowY: el.style.overflowY,
+        overflow: el.style.overflow,
+      })
+      el.style.overflow = 'hidden'
+      el.style.overflowY = 'hidden'
+    }
+
+    // Nested projects pane (#projects) is the real scroller; main is the outer one
+    lock(document.querySelector('main'))
+    lock(document.getElementById('projects'))
 
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener('keydown', onKeyDown)
-      if (main) main.style.overflow = prevOverflow
+      locked.forEach(({ el, overflowY, overflow }) => {
+        el.style.overflow = overflow
+        el.style.overflowY = overflowY
+      })
     }
   }, [onClose])
 
   const hasMedia = Boolean(project.video || project.image)
 
-  return (
+  const modal = (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35, ease: EASE }}
-      className="fixed inset-0 z-[120] flex items-end justify-center bg-[#0B0B0A]/92 pt-[min(14vh,4.5rem)] sm:items-center sm:p-4 sm:pt-4 md:p-6"
+      className="fixed inset-0 z-[130] flex items-end justify-center bg-[#0B0B0A]/92 pt-[min(14vh,4.5rem)] sm:items-center sm:p-4 sm:pt-4 md:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="project-detail-title"
@@ -166,6 +174,9 @@ const ProjectDetailView = ({ project, onClose }: ProjectDetailViewProps) => {
       </motion.article>
     </motion.div>
   )
+
+  if (typeof document === 'undefined') return null
+  return createPortal(modal, document.body)
 }
 
 export default ProjectDetailView

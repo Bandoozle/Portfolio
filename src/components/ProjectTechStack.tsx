@@ -1,9 +1,5 @@
 import { techStackIconMap } from '../data/techStackIcons'
-
-const FONT_BODY = {
-  fontFamily: "'Satoshi', 'Inter', 'Helvetica Neue', Arial, sans-serif",
-  fontStyle: 'normal' as const,
-}
+import { FONT_BODY } from '../theme/fonts'
 
 type ProjectTechStackProps = {
   stack: string[]
