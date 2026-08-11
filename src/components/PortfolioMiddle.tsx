@@ -466,9 +466,8 @@ const CtaSection = () => {
                   style={FONT_DISPLAY}
                   onMouseEnter={() => setActive(i)}
                   onFocus={() => setActive(i)}
-                  onClick={() => setActive(i)}
                 >
-                  <span className="md:hidden" style={{ color, transition: 'color 0.2s ease' }}>
+                  <span className="text-[var(--site-ink)] md:hidden">
                     <Icon className="h-8 w-8" strokeWidth={1.75} aria-hidden />
                   </span>
 
@@ -516,7 +515,7 @@ const CtaSection = () => {
           </nav>
         </div>
 
-        <div className="flex min-h-[14rem] w-full flex-col items-center justify-center self-stretch rounded-[1.75rem] bg-[#2E2B2B] px-[clamp(3.25rem,9vw,6rem)] py-[clamp(2.75rem,7vw,4.5rem)] md:h-full md:min-h-0 md:rounded-full">
+        <div className="hidden min-h-[14rem] w-full flex-col items-center justify-center self-stretch rounded-[1.75rem] bg-[#2E2B2B] px-[clamp(3.25rem,9vw,6rem)] py-[clamp(2.75rem,7vw,4.5rem)] md:flex md:h-full md:min-h-0 md:rounded-full">
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={activeContact.id}

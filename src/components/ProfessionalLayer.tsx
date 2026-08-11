@@ -16,7 +16,7 @@ const ProfessionalLayer = () => {
     >
       <main
         ref={scrollRef}
-        className="h-full overflow-x-clip overflow-y-auto overscroll-y-contain scroll-pt-24 pb-[4.75rem] [-webkit-overflow-scrolling:touch] sm:pb-0 sm:scroll-pt-28"
+        className="h-full overflow-x-clip overflow-y-auto overscroll-y-contain scroll-pt-24 pb-[3.75rem] [-webkit-overflow-scrolling:touch] sm:pb-0 sm:scroll-pt-28"
         style={{ backgroundColor: cssBg, color: cssInk }}
       >
         <IntroHero />

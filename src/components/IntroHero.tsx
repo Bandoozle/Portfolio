@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { Menu, X } from 'lucide-react'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import AboutMeSection from './AboutMeSection'
 import HeroAboutDraw from './HeroAboutDraw'
@@ -129,6 +130,8 @@ const onNavHashClick = (event: MouseEvent<HTMLAnchorElement>) => {
 
 const StickyNav = () => {
   const [overExperience, setOverExperience] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     const scroller = document.querySelector('[data-main] main')
@@ -151,54 +154,147 @@ const StickyNav = () => {
       }
     }
 
+    const onResize = () => {
+      if (window.matchMedia('(min-width: 640px)').matches) setMenuOpen(false)
+      update()
+    }
+
     scroller.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update)
+    window.addEventListener('resize', onResize)
     update()
     return () => {
       scroller.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
 
   const barBg = overExperience ? '#2E2B2B' : '#201D1D'
   const barBorder = '2px solid rgba(244, 244, 244, 0.28)'
 
-  return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 sm:bottom-auto sm:top-0 sm:px-4 sm:pb-0 sm:pt-6 md:px-5 md:pt-7">
-      <nav
-        className="pointer-events-auto flex w-fit max-w-[calc(100vw-1.5rem)] items-center justify-center gap-2 text-[#F4F4F4] sm:gap-4"
-        style={FONT_DISPLAY}
-        aria-label="Primary"
-      >
-        <a
-          href="#hero"
-          onClick={onNavHashClick}
-          className="flex h-11 shrink-0 items-center justify-center rounded-[10px] px-3 transition-[background-color,border-color,opacity] duration-300 ease-out hover:opacity-70 sm:h-[clamp(2.75rem,4.5vw,3.35rem)] sm:px-5"
-          style={{ backgroundColor: barBg, border: barBorder }}
-        >
-          <span className="whitespace-nowrap text-[0.85rem] font-normal leading-none tracking-[-0.015em] sm:text-[clamp(0.95rem,1.7vw,1.15rem)]">
-            Home
-          </span>
-        </a>
+  const handleMobileNavClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    setMenuOpen(false)
+    onNavHashClick(event)
+  }
 
-        <ul
-          className="flex h-11 min-w-0 max-w-[min(100%,calc(100vw-5.25rem))] items-center gap-x-3 overflow-x-auto rounded-[10px] px-3 transition-[background-color,border-color] duration-300 ease-out sm:h-[clamp(2.75rem,4.5vw,3.35rem)] sm:max-w-none sm:gap-x-6 sm:px-6 md:gap-x-7 md:px-7"
-          style={{ backgroundColor: barBg, border: barBorder }}
+  return (
+    <>
+      {/* Mobile — compact Home + hamburger that expands upward */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-2 sm:hidden">
+        <nav
+          className="pointer-events-auto relative flex flex-col items-center text-[#F4F4F4]"
+          style={FONT_DISPLAY}
+          aria-label="Primary"
         >
-          {MENU_LINKS.map((link) => (
-            <li key={link.label} className="shrink-0">
-              <a
-                href={link.href}
-                onClick={onNavHashClick}
-                className="block whitespace-nowrap text-[0.85rem] font-normal leading-none tracking-[-0.015em] transition-opacity hover:opacity-70 sm:text-[clamp(0.95rem,1.7vw,1.15rem)]"
+          <AnimatePresence initial={false}>
+            {menuOpen ? (
+              <motion.ul
+                key="mobile-menu"
+                id="mobile-nav-menu"
+                initial={reduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: 8, filter: 'blur(4px)' }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute bottom-full mb-2 flex w-max min-w-[9.5rem] flex-col items-stretch gap-0.5 rounded-[12px] px-1.5 py-1.5"
+                style={{ backgroundColor: barBg, border: barBorder }}
               >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
+                {MENU_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      onClick={handleMobileNavClick}
+                      className="block rounded-[8px] px-3.5 py-2.5 text-center text-[0.9rem] font-normal leading-none tracking-[-0.015em] transition-opacity hover:opacity-70 active:scale-[0.96]"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </motion.ul>
+            ) : null}
+          </AnimatePresence>
+
+          <div className="flex items-center gap-1.5">
+            <a
+              href="#hero"
+              onClick={handleMobileNavClick}
+              className="flex h-10 items-center justify-center rounded-[10px] px-3.5 transition-[background-color,border-color,opacity] duration-300 ease-out hover:opacity-70 active:scale-[0.96]"
+              style={{ backgroundColor: barBg, border: barBorder }}
+            >
+              <span className="whitespace-nowrap text-[0.85rem] font-normal leading-none tracking-[-0.015em]">
+                Home
+              </span>
+            </a>
+
+            <button
+              type="button"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav-menu"
+              onClick={() => setMenuOpen((open) => !open)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-[10px] transition-[background-color,border-color] duration-300 ease-out active:scale-[0.96]"
+              style={{ backgroundColor: barBg, border: barBorder }}
+            >
+              <span className="relative flex h-5 w-5 items-center justify-center">
+                <Menu
+                  className={`absolute h-[1.15rem] w-[1.15rem] transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
+                    menuOpen
+                      ? 'scale-[0.25] opacity-0 blur-[4px]'
+                      : 'scale-100 opacity-100 blur-0'
+                  }`}
+                  strokeWidth={2}
+                  aria-hidden
+                />
+                <X
+                  className={`absolute h-[1.15rem] w-[1.15rem] transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
+                    menuOpen
+                      ? 'scale-100 opacity-100 blur-0'
+                      : 'scale-[0.25] opacity-0 blur-[4px]'
+                  }`}
+                  strokeWidth={2}
+                  aria-hidden
+                />
+              </span>
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {/* Desktop — full tab bar */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-50 hidden justify-center px-4 pt-6 sm:flex md:px-5 md:pt-7">
+        <nav
+          className="pointer-events-auto flex w-fit max-w-[calc(100vw-1.5rem)] items-center justify-center gap-4 text-[#F4F4F4]"
+          style={FONT_DISPLAY}
+          aria-label="Primary"
+        >
+          <a
+            href="#hero"
+            onClick={onNavHashClick}
+            className="flex h-[clamp(2.75rem,4.5vw,3.35rem)] shrink-0 items-center justify-center rounded-[10px] px-5 transition-[background-color,border-color,opacity] duration-300 ease-out hover:opacity-70"
+            style={{ backgroundColor: barBg, border: barBorder }}
+          >
+            <span className="whitespace-nowrap text-[clamp(0.95rem,1.7vw,1.15rem)] font-normal leading-none tracking-[-0.015em]">
+              Home
+            </span>
+          </a>
+
+          <ul
+            className="flex h-[clamp(2.75rem,4.5vw,3.35rem)] items-center gap-x-6 rounded-[10px] px-6 transition-[background-color,border-color] duration-300 ease-out md:gap-x-7 md:px-7"
+            style={{ backgroundColor: barBg, border: barBorder }}
+          >
+            {MENU_LINKS.map((link) => (
+              <li key={link.label} className="shrink-0">
+                <a
+                  href={link.href}
+                  onClick={onNavHashClick}
+                  className="block whitespace-nowrap text-[clamp(0.95rem,1.7vw,1.15rem)] font-normal leading-none tracking-[-0.015em] transition-opacity hover:opacity-70"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </>
   )
 }
 
