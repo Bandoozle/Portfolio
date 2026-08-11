@@ -800,7 +800,7 @@ const ProjectsGallerySection = () => {
     <section
       ref={sectionRef}
       id="projects"
-      className="relative flex min-h-[100dvh] flex-col justify-start pt-[clamp(4rem,10vw,9rem)] pb-[clamp(3rem,7vw,6rem)] text-[var(--site-ink)]"
+      className="relative flex min-h-[100dvh] flex-col justify-start pt-3 pb-[clamp(3rem,7vw,6rem)] text-[var(--site-ink)] sm:pt-[clamp(4rem,10vw,9rem)]"
       aria-label="Projects"
     >
       <div className="relative z-20 mb-6 flex w-full shrink-0 flex-col items-center px-3 text-center sm:mb-10 sm:px-4 md:mb-12 md:px-5 lg:px-6">

@@ -383,6 +383,7 @@ const HeroCaption = () => (
  * OSMO-style image arc: cards are bolted to spokes on a spinning wheel.
  * Only the upper half is visible — lower-half spokes are hidden every frame
  * so the crest never needs aggressive clipping that would cut the top cards.
+ * Desktop / tablet only — mobile uses ImageCarousel.
  */
 const ImageArc = ({ reducedMotion }: { reducedMotion: boolean }) => {
   const wheelRef = useRef<HTMLDivElement>(null)
@@ -393,6 +394,7 @@ const ImageArc = ({ reducedMotion }: { reducedMotion: boolean }) => {
     const wheel = wheelRef.current
     if (!wheel) return
 
+    const mq = window.matchMedia('(min-width: 640px)')
     let rot = 0
     let raf = 0
     let last = performance.now()
@@ -402,32 +404,48 @@ const ImageArc = ({ reducedMotion }: { reducedMotion: boolean }) => {
         if (!spoke) return
         let angleDeg = (slot * index + rotDeg) % 360
         if (angleDeg < 0) angleDeg += 360
-        // 0° = apex; cos > 0 ⇒ upper semicircle only
         const onUpper = Math.cos((angleDeg * Math.PI) / 180) > 0.02
         spoke.style.visibility = onUpper ? 'visible' : 'hidden'
         spoke.style.opacity = onUpper ? '1' : '0'
       })
     }
 
-    syncUpperHalf(rot)
-    if (reducedMotion) return
+    const stop = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+    }
 
-    const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
-      rot = (rot + dt * ARC_SPEED_DEG) % 360
-      wheel.style.transform = `rotate(${rot}deg)`
-      syncUpperHalf(rot)
+    const start = () => {
+      if (!mq.matches || reducedMotion) {
+        stop()
+        syncUpperHalf(rot)
+        return
+      }
+      if (raf) return
+      last = performance.now()
+      const tick = (now: number) => {
+        const dt = Math.min(0.05, (now - last) / 1000)
+        last = now
+        rot = (rot + dt * ARC_SPEED_DEG) % 360
+        wheel.style.transform = `rotate(${rot}deg)`
+        syncUpperHalf(rot)
+        raf = requestAnimationFrame(tick)
+      }
       raf = requestAnimationFrame(tick)
     }
-    raf = requestAnimationFrame(tick)
 
-    return () => cancelAnimationFrame(raf)
+    syncUpperHalf(rot)
+    start()
+    mq.addEventListener('change', start)
+    return () => {
+      mq.removeEventListener('change', start)
+      stop()
+    }
   }, [reducedMotion, slot])
 
   return (
     <div
-      className="relative z-[2] w-screen max-w-none overflow-x-hidden overflow-y-hidden"
+      className="relative z-[2] hidden w-screen max-w-none overflow-x-hidden overflow-y-hidden sm:block"
       style={{
         height: STAGE_H,
         marginLeft: 'calc(50% - 50vw)',
@@ -491,6 +509,104 @@ const ImageArc = ({ reducedMotion }: { reducedMotion: boolean }) => {
   )
 }
 
+/** Mobile — straight L→R marquee of the same hero images. */
+const CAROUSEL_CARD_W = 'min(68vw, 15.5rem)'
+const CAROUSEL_CARD_H = 'min(54vw, 12.25rem)'
+const CAROUSEL_SPEED_PX = 36
+const CAROUSEL_ITEMS = [...ARC_IMAGES, ...ARC_IMAGES, ...ARC_IMAGES] as const
+
+const ImageCarousel = ({ reducedMotion }: { reducedMotion: boolean }) => {
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track || reducedMotion) return
+
+    const mq = window.matchMedia('(max-width: 639px)')
+    let x = 0
+    let raf = 0
+    let last = performance.now()
+    let loopWidth = 0
+
+    const measure = () => {
+      loopWidth = track.scrollWidth / 2
+    }
+
+    const stop = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+    }
+
+    const start = () => {
+      if (!mq.matches) {
+        stop()
+        return
+      }
+      measure()
+      if (raf) return
+      last = performance.now()
+      const tick = (now: number) => {
+        const dt = Math.min(0.05, (now - last) / 1000)
+        last = now
+        x -= CAROUSEL_SPEED_PX * dt
+        if (loopWidth > 0 && -x >= loopWidth) x += loopWidth
+        track.style.transform = `translate3d(${x}px, 0, 0)`
+        raf = requestAnimationFrame(tick)
+      }
+      raf = requestAnimationFrame(tick)
+    }
+
+    start()
+    mq.addEventListener('change', start)
+    window.addEventListener('resize', measure)
+    return () => {
+      mq.removeEventListener('change', start)
+      window.removeEventListener('resize', measure)
+      stop()
+    }
+  }, [reducedMotion])
+
+  const renderCards = (keyPrefix: string) =>
+    CAROUSEL_ITEMS.map((src, index) => (
+      <div
+        key={`${keyPrefix}-${src}-${index}`}
+        className="box-border shrink-0 overflow-hidden rounded-[8px] bg-[#201D1D]"
+        style={{
+          width: CAROUSEL_CARD_W,
+          height: CAROUSEL_CARD_H,
+          padding: CARD_FRAME,
+        }}
+      >
+        <div className="relative h-full w-full overflow-hidden rounded-[5px] bg-[#2a2727]">
+          <img
+            src={src}
+            alt=""
+            className="absolute inset-0 block h-full w-full object-cover"
+            draggable={false}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </div>
+    ))
+
+  return (
+    <div
+      className="relative z-[2] w-screen max-w-none overflow-x-hidden sm:hidden"
+      style={{ marginLeft: 'calc(50% - 50vw)' }}
+      aria-hidden
+    >
+      <div
+        ref={trackRef}
+        className="flex w-max items-center gap-3 will-change-transform px-3 py-1"
+      >
+        {renderCards('a')}
+        {renderCards('b')}
+      </div>
+    </div>
+  )
+}
+
 const IntroHero = () => {
   const prefersReducedMotion = useReducedMotion()
   const reducedMotion = prefersReducedMotion === true
@@ -534,11 +650,12 @@ const IntroHero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.16, ease: EASE }}
           >
+            <ImageCarousel reducedMotion={reducedMotion} />
             <ImageArc reducedMotion={reducedMotion} />
           </motion.div>
 
           {/* Draw starts at About — path origin sits with this block */}
-          <div className="relative z-[1] mx-auto mt-8 w-full max-w-[min(64rem,96vw)] overflow-visible bg-transparent px-3 pb-[clamp(2rem,5vw,3.5rem)] sm:-mt-[clamp(5rem,12vw,11rem)] sm:mt-0 sm:px-6">
+          <div className="relative z-[1] mx-auto mt-8 w-full max-w-[min(64rem,96vw)] overflow-visible bg-transparent px-3 pb-4 sm:-mt-[clamp(5rem,12vw,11rem)] sm:mt-0 sm:px-6 sm:pb-[clamp(2rem,5vw,3.5rem)]">
             <HeroAboutDraw />
             <div className="relative z-[1]">
               <AboutMeSection />
