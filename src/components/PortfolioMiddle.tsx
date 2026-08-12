@@ -270,7 +270,7 @@ const FaqSection = () => {
 
                 return (
                   <Reveal
-                    key={i}
+                  key={i}
                     delay={0.08 + i * 0.1}
                     y={18}
                     className={`w-full ${i > 0 ? 'border-t-2 border-solid border-[var(--site-ink)]/15' : ''}`}
@@ -326,34 +326,34 @@ const FaqSection = () => {
                     <div className="hidden grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start gap-x-14 py-7 md:grid">
                       <h3
                         className="-mr-8 ml-auto w-full max-w-[19ch] text-left text-[clamp(1.55rem,3.2vw,2.25rem)] font-normal leading-[1.18] tracking-[-0.035em] text-balance"
-                        style={{ ...FONT_DISPLAY, color: cssInk }}
-                      >
-                        <FaqRichText parts={item.q} />
-                      </h3>
-                      <p
+                    style={{ ...FONT_DISPLAY, color: cssInk }}
+                  >
+                    <FaqRichText parts={item.q} />
+                  </h3>
+                  <p
                         className="-ml-2 max-w-[28ch] text-left text-[clamp(1.12rem,1.95vw,1.4rem)] font-normal leading-[1.5] tracking-[-0.015em] text-pretty"
                         style={{
                           ...FONT_DISPLAY,
                           color: 'color-mix(in srgb, var(--site-ink) 72%, transparent)',
                         }}
-                      >
-                        <FaqRichText parts={item.a} />
-                      </p>
-                    </div>
+                  >
+                    <FaqRichText parts={item.a} />
+                  </p>
+                </div>
                   </Reveal>
                 )
               })}
 
               <Reveal delay={0.08 + faqs.length * 0.1} y={16}>
-                <a
-                  href="https://linkedin.com/in/marcosuteja"
-                  target="_blank"
-                  rel="noreferrer"
+              <a
+                href="https://linkedin.com/in/marcosuteja"
+                target="_blank"
+                rel="noreferrer"
                   className="mt-6 inline-flex items-center rounded-full bg-[#6840FF] px-[1.2em] py-[0.7em] text-center text-[clamp(1.15rem,4.2vw,1.45rem)] font-normal leading-none tracking-[-0.03em] text-[#F4F4F4] transition-opacity duration-200 hover:opacity-85 sm:mt-8 sm:px-[1.35em] md:text-[clamp(1.55rem,3.2vw,2.25rem)]"
-                  style={FONT_DISPLAY}
-                >
-                  More questions? Book a call
-                </a>
+                style={FONT_DISPLAY}
+              >
+                More questions? Book a call
+              </a>
               </Reveal>
             </div>
           </motion.div>
@@ -492,8 +492,8 @@ const CtaSection = () => {
                           color,
                           transition: 'color 0.2s ease',
                         }}
-                      >
-                        {link.label}
+                  >
+                    {link.label}
                       </span>
                       <span
                         aria-hidden
@@ -504,16 +504,16 @@ const CtaSection = () => {
                           color,
                           transition: 'color 0.2s ease',
                         }}
-                      >
-                        {link.label}
+                  >
+                    {link.label}
                       </span>
                     </span>
                   </span>
-                </a>
+                  </a>
               )
             })}
-          </nav>
-        </div>
+              </nav>
+            </div>
 
         <div className="hidden min-h-[14rem] w-full flex-col items-center justify-center self-stretch rounded-[1.75rem] bg-[#2E2B2B] px-[clamp(3.25rem,9vw,6rem)] py-[clamp(2.75rem,7vw,4.5rem)] md:flex md:h-full md:min-h-0 md:rounded-full">
           <AnimatePresence mode="wait" initial={false}>
@@ -529,7 +529,7 @@ const CtaSection = () => {
               {activeContact.blurb}
             </motion.p>
           </AnimatePresence>
-        </div>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -1,5 +1,6 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Liquid } from 'liquid-gooey'
+import { Briefcase, Home, Layers, Mail, MessageCircleQuestion, Plus, X, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import AboutMeSection from './AboutMeSection'
 import HeroAboutDraw from './HeroAboutDraw'
@@ -53,6 +54,21 @@ const MENU_LINKS = [
   { label: 'Contact', href: '#contact' },
 ] as const
 
+/** Mobile gooey menu — 5 tabs in a tight upward arc (Home covers About). */
+const MOBILE_NAV_LINKS: {
+  label: string
+  href: string
+  Icon: LucideIcon
+  x: number
+  y: number
+}[] = [
+  { label: 'Home', href: '#hero', Icon: Home, x: -92, y: -36 },
+  { label: 'Projects', href: '#projects', Icon: Layers, x: -52, y: -78 },
+  { label: 'Experience', href: '#experience', Icon: Briefcase, x: 0, y: -96 },
+  { label: 'Questions', href: '#faq', Icon: MessageCircleQuestion, x: 52, y: -78 },
+  { label: 'Contact', href: '#contact', Icon: Mail, x: 92, y: -36 },
+]
+
 /**
  * Per-tab landing offset (px). Change these, save, then click the tab again.
  * +N → section sits lower (more space above)
@@ -62,7 +78,7 @@ const MENU_LINKS = [
 const NAV_SCROLL_OFFSET: Record<string, number> = {
   hero: 0,
   about: 100,
-  projects: -160,
+  projects: -40,
   experience: -120,
   faq: -110,
   contact: -140,
@@ -131,7 +147,6 @@ const onNavHashClick = (event: MouseEvent<HTMLAnchorElement>) => {
 const StickyNav = () => {
   const [overExperience, setOverExperience] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     const scroller = document.querySelector('[data-main] main')
@@ -178,83 +193,99 @@ const StickyNav = () => {
 
   return (
     <>
-      {/* Mobile — compact Home + hamburger that expands upward */}
+      {/* Mobile — liquid gooey plus menu */}
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-2 sm:hidden">
         <nav
-          className="pointer-events-auto relative flex flex-col items-center text-[#F4F4F4]"
+          className="pointer-events-auto text-[#F4F4F4]"
           style={FONT_DISPLAY}
           aria-label="Primary"
         >
-          <AnimatePresence initial={false}>
-            {menuOpen ? (
-              <motion.ul
-                key="mobile-menu"
-                id="mobile-nav-menu"
-                initial={reduceMotion ? false : { opacity: 0, y: 10, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={reduceMotion ? undefined : { opacity: 0, y: 8, filter: 'blur(4px)' }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute bottom-full mb-2 flex w-max min-w-[9.5rem] flex-col items-stretch gap-0.5 rounded-[12px] px-1.5 py-1.5"
-                style={{ backgroundColor: barBg, border: barBorder }}
+          <Liquid
+            blur={3.5}
+            contrast={22}
+            fill={barBg}
+            shadow="0 10px 28px rgba(0,0,0,0.28)"
+            filterPadding={48}
+            className="relative h-[10.5rem] w-[min(100vw-1.25rem,16.5rem)]"
+          >
+            {MOBILE_NAV_LINKS.map((link, i) => {
+              const Icon = link.Icon
+              return (
+                <Liquid.Item
+                  key={link.href}
+                  x={menuOpen ? link.x : 0}
+                  y={menuOpen ? link.y : 0}
+                  transition="bouncy"
+                  delay={menuOpen ? i * 28 : (MOBILE_NAV_LINKS.length - 1 - i) * 18}
+                  radius={24}
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    bottom: 8,
+                    width: 48,
+                    height: 48,
+                    marginLeft: -24,
+                  }}
+                >
+                  <a
+                    href={link.href}
+                    onClick={handleMobileNavClick}
+                    tabIndex={menuOpen ? 0 : -1}
+                    aria-label={link.label}
+                    aria-hidden={!menuOpen}
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-transparent text-[#F4F4F4] transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.2,0,0,1)] hover:opacity-80 active:scale-[0.96]"
+                    style={{
+                      pointerEvents: menuOpen ? 'auto' : 'none',
+                      opacity: menuOpen ? 1 : 0,
+                    }}
+                  >
+                    <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </a>
+                </Liquid.Item>
+              )
+            })}
+
+            <Liquid.Item
+              radius={24}
+              style={{
+                position: 'absolute',
+                left: '50%',
+                bottom: 8,
+                width: 48,
+                height: 48,
+                marginLeft: -24,
+              }}
+            >
+              <button
+                type="button"
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((open) => !open)}
+                className="relative flex h-12 w-12 items-center justify-center rounded-full bg-transparent text-[#F4F4F4] active:scale-[0.96]"
               >
-                {MENU_LINKS.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      onClick={handleMobileNavClick}
-                      className="block rounded-[8px] px-3.5 py-2.5 text-center text-[0.9rem] font-normal leading-none tracking-[-0.015em] transition-opacity hover:opacity-70 active:scale-[0.96]"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </motion.ul>
-            ) : null}
-          </AnimatePresence>
-
-          <div className="flex items-center gap-1.5">
-            <a
-              href="#hero"
-              onClick={handleMobileNavClick}
-              className="flex h-10 items-center justify-center rounded-[10px] px-3.5 transition-[background-color,border-color,opacity] duration-300 ease-out hover:opacity-70 active:scale-[0.96]"
-              style={{ backgroundColor: barBg, border: barBorder }}
-            >
-              <span className="whitespace-nowrap text-[0.85rem] font-normal leading-none tracking-[-0.015em]">
-                Home
-              </span>
-            </a>
-
-            <button
-              type="button"
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-nav-menu"
-              onClick={() => setMenuOpen((open) => !open)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-[10px] transition-[background-color,border-color] duration-300 ease-out active:scale-[0.96]"
-              style={{ backgroundColor: barBg, border: barBorder }}
-            >
-              <span className="relative flex h-5 w-5 items-center justify-center">
-                <Menu
-                  className={`absolute h-[1.15rem] w-[1.15rem] transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
-                    menuOpen
-                      ? 'scale-[0.25] opacity-0 blur-[4px]'
-                      : 'scale-100 opacity-100 blur-0'
-                  }`}
-                  strokeWidth={2}
-                  aria-hidden
-                />
-                <X
-                  className={`absolute h-[1.15rem] w-[1.15rem] transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
-                    menuOpen
-                      ? 'scale-100 opacity-100 blur-0'
-                      : 'scale-[0.25] opacity-0 blur-[4px]'
-                  }`}
-                  strokeWidth={2}
-                  aria-hidden
-                />
-              </span>
-            </button>
-          </div>
+                <span className="relative flex h-5 w-5 items-center justify-center">
+                  <Plus
+                    className={`absolute h-5 w-5 transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
+                      menuOpen
+                        ? 'scale-[0.25] rotate-45 opacity-0 blur-[4px]'
+                        : 'scale-100 rotate-0 opacity-100 blur-0'
+                    }`}
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                  <X
+                    className={`absolute h-5 w-5 transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] ${
+                      menuOpen
+                        ? 'scale-100 rotate-0 opacity-100 blur-0'
+                        : 'scale-[0.25] -rotate-45 opacity-0 blur-[4px]'
+                    }`}
+                    strokeWidth={2}
+                    aria-hidden
+                  />
+                </span>
+              </button>
+            </Liquid.Item>
+          </Liquid>
         </nav>
       </div>
 
