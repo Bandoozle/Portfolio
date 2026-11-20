@@ -3,6 +3,7 @@ import IntroHero from './IntroHero'
 import ExperienceSection from './ExperienceSection'
 import { CtaSection, FaqSection } from './PortfolioMiddle'
 import ProjectsGallerySection from './ProjectsGallerySection'
+import WhatIDoSection from './bento/WhatIDoSection'
 import { cssBg, cssInk } from '../theme/palette'
 
 const ProfessionalLayer = () => {
@@ -21,6 +22,7 @@ const ProfessionalLayer = () => {
       >
         <IntroHero />
         <ProjectsGallerySection />
+        <WhatIDoSection />
         <ExperienceSection />
         <FaqSection />
         <CtaSection />

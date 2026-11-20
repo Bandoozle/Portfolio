@@ -43,8 +43,9 @@ const APEX_INSET = `calc(${CARD_H} / 2 + 2.25rem)`
  */
 const STAGE_H = `calc(${CARD_H} + 28vw)`
 
-/** Even black frame around the media */
-const CARD_FRAME = '0.35em'
+/** Black frame around the media */
+const CARD_FRAME = '0.26em'
+const FRAME_COLOR = '#201D1D'
 
 const MENU_LINKS = [
   { label: 'About', href: '#about' },
@@ -518,10 +519,10 @@ const ImageArc = ({ reducedMotion }: { reducedMotion: boolean }) => {
               }}
             >
               <div
-                className="box-border h-full w-full overflow-hidden rounded-[8px] bg-[#201D1D]"
-                style={{ padding: CARD_FRAME }}
+                className="box-border h-full w-full overflow-hidden rounded-[7px]"
+                style={{ padding: CARD_FRAME, backgroundColor: FRAME_COLOR }}
               >
-                <div className="relative h-full w-full overflow-hidden rounded-[5px] bg-[#2a2727]">
+                <div className="relative h-full w-full overflow-hidden rounded-[5px]" style={{ backgroundColor: FRAME_COLOR }}>
                   <img
                     src={src}
                     alt=""
@@ -601,14 +602,15 @@ const ImageCarousel = ({ reducedMotion }: { reducedMotion: boolean }) => {
     CAROUSEL_ITEMS.map((src, index) => (
       <div
         key={`${keyPrefix}-${src}-${index}`}
-        className="box-border shrink-0 overflow-hidden rounded-[8px] bg-[#201D1D]"
+        className="box-border shrink-0 overflow-hidden rounded-[7px]"
         style={{
           width: CAROUSEL_CARD_W,
           height: CAROUSEL_CARD_H,
           padding: CARD_FRAME,
+          backgroundColor: FRAME_COLOR,
         }}
       >
-        <div className="relative h-full w-full overflow-hidden rounded-[5px] bg-[#2a2727]">
+        <div className="relative h-full w-full overflow-hidden rounded-[5px]" style={{ backgroundColor: FRAME_COLOR }}>
           <img
             src={src}
             alt=""
