@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Liquid } from 'liquid-gooey'
-import { Briefcase, Home, Layers, Mail, MessageCircleQuestion, Plus, X, type LucideIcon } from 'lucide-react'
+import { Briefcase, Home, Layers, Mail, MessageCircleQuestion, Plus, Sparkles, X, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import AboutMeSection from './AboutMeSection'
 import HeroAboutDraw from './HeroAboutDraw'
@@ -50,12 +50,13 @@ const FRAME_COLOR = '#201D1D'
 const MENU_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Projects', href: '#projects' },
+  { label: 'What I Do', href: '#what-i-do' },
   { label: 'Experience', href: '#experience' },
   { label: 'Questions', href: '#faq' },
   { label: 'Contact', href: '#contact' },
 ] as const
 
-/** Mobile gooey menu — 5 tabs in a tight upward arc (Home covers About). */
+/** Mobile gooey menu — 6 tabs in a tight upward arc (Home covers About). */
 const MOBILE_NAV_LINKS: {
   label: string
   href: string
@@ -63,11 +64,12 @@ const MOBILE_NAV_LINKS: {
   x: number
   y: number
 }[] = [
-  { label: 'Home', href: '#hero', Icon: Home, x: -92, y: -36 },
-  { label: 'Projects', href: '#projects', Icon: Layers, x: -52, y: -78 },
-  { label: 'Experience', href: '#experience', Icon: Briefcase, x: 0, y: -96 },
-  { label: 'Questions', href: '#faq', Icon: MessageCircleQuestion, x: 52, y: -78 },
-  { label: 'Contact', href: '#contact', Icon: Mail, x: 92, y: -36 },
+  { label: 'Home', href: '#hero', Icon: Home, x: -103, y: -38 },
+  { label: 'Projects', href: '#projects', Icon: Layers, x: -74, y: -82 },
+  { label: 'What I Do', href: '#what-i-do', Icon: Sparkles, x: -27, y: -107 },
+  { label: 'Experience', href: '#experience', Icon: Briefcase, x: 27, y: -107 },
+  { label: 'Questions', href: '#faq', Icon: MessageCircleQuestion, x: 74, y: -82 },
+  { label: 'Contact', href: '#contact', Icon: Mail, x: 103, y: -38 },
 ]
 
 /**
@@ -80,6 +82,7 @@ const NAV_SCROLL_OFFSET: Record<string, number> = {
   hero: 0,
   about: 100,
   projects: -40,
+  'what-i-do': -40,
   experience: -120,
   faq: -110,
   contact: -140,
